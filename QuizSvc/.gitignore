@@ -1,0 +1,13 @@
+#Ignore all .dll's
+*.dll
+
+#debug files
+*.pdb
+
+/obj
+/Test/obj
+/Test/bin
+/Main/obj
+/Main/bin
+
+/Main/project.lock.json
