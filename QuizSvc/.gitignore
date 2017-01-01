@@ -1,13 +1,25 @@
-#Ignore all .dll's
+#dll's files
 *.dll
 
 #debug files
 *.pdb
 
+#lock.json files 
+*.lock.json
+
+# Directorys
 /obj
 /Test/obj
 /Test/bin
+
 /Main/obj
 /Main/bin
 
-/Main/project.lock.json
+/QuestionRepository/bin
+/QuestionRepository/obj
+
+/AnswerRepository/bin
+/AnswerRepository/obj
+
+/TopicRepository/bin
+/TopicRepository/obj
