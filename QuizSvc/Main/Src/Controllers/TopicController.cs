@@ -18,7 +18,7 @@ namespace TopicController
         }
 
         [HttpGet(Name="Get")]
-        public async Task<IActionResult> GetAll()
+        public Task<IActionResult> GetAll()
         {
            throw new NotImplementedException();
         }

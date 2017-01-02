@@ -1,5 +1,5 @@
 # Project Details
-Web api's are build to help students to build there own Quize.
+Web api's project is to help students, make there own Quize.
 It has three part
    1. Topic - Topic/Chapers are root objects which contains Questions
    2. Question - Questions fall into one topic 
@@ -9,16 +9,31 @@ It has three part
 
 *   Directory strcture
 ```
-/Main
-  |__/QuestionsSvc
-  |      |__/Main
-  |           |__src
-  |_/Questions.Test
-         |_Interation
-  |__/Repository
-         |__/QuestionRepository
-      |__Test Files
-      |__project.json
+/QuizSvc
+  |__/AnswerRepository
+  |      |__/Src
+  |      |_/project.json
+  |
+  |_/Main
+  |    |_/Src
+  |    |_/project.json
+  |
+  |__/QuestionRepository
+  |       |__/Src
+  |       |_/project.json
+  |
+  |__/Test
+  |     |_/Topic
+  |     |__/project.json
+  |
+  |_/TopicRepository
+  |     |_/src
+  |     |_/project.json
+  |
+  |_/global.json
+  |_/Dockerfile
+  |_/Readme.md
+
 ```
 
 ## Building Project
@@ -61,4 +76,13 @@ $dotnet build **/project.json
 ### Build lib
 ```
 $dotnet new -t lib
+```
+
+## Running from Docker
+```
+Build Image
+    $ docker build -t quizserver:QuizWebApiServer .
+
+Run Image
+    $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
 ```

@@ -4,8 +4,7 @@
 #debug files
 *.pdb
 
-#lock.json files 
-*.lock.json
+./.vscode/
 
 # Directorys
 /obj
@@ -23,3 +22,4 @@
 
 /TopicRepository/bin
 /TopicRepository/obj
+
