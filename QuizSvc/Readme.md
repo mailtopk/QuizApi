@@ -32,8 +32,52 @@ It has three part
   |
   |_/global.json
   |_/Dockerfile
+  |_/docker-compose.yml
   |_/Readme.md
 
+```
+
+# Docker Environment
+
+### Running from Docker
+* Build and run quiz web service image
+```
+    $ docker build -t quizserver:QuizWebApiServer .
+
+    $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
+```
+
+### Clean and remove containers
+```
+    $ docker stop $(docker ps -a -q) - Stop all containers
+    $ docker rm $(docker ps -a -q)  - remove all containers
+```
+
+### Remove all images
+```
+    $ docker rmi $(docker images -a -q)
+```
+
+
+### Build docker compose
+```
+    docker-compose build
+```
+
+### Run docker compose
+```
+    docker-compose up
+```
+
+### Stop containers
+```
+    docker-compose stop
+```
+
+## Mongo DB
+* Attach to mongo process
+```
+    $docker exec -it <containerId> bash
 ```
 
 ## Building Project
@@ -65,24 +109,15 @@ It has three part
 
 #### With the project.json in SolutionDir/Src/ProjectName:
 ```
-$dotnet build */**/project.json
+    $dotnet build */**/project.json
 ```
 
 #### If project.json in SolutionDir/ProjectName:
 ```
-$dotnet build **/project.json
+    $ dotnet build **/project.json
 ```
 
 ### Build lib
 ```
-$dotnet new -t lib
-```
-
-## Running from Docker
-```
-Build Image
-    $ docker build -t quizserver:QuizWebApiServer .
-
-Run Image
-    $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
+    $ dotnet new -t lib
 ```
