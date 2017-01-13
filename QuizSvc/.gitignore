@@ -25,3 +25,6 @@
 
 # Project lock jason
 /*/Project.lock.json
+
+#Ignore local scripts
+Tools/

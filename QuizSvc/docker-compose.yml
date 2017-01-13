@@ -1,11 +1,11 @@
 version: '2'
 services: 
-    service1:
+    webservice:
         image: quizwebapi
         build: .
         ports: 
-            - 8080:5000
-    service2:
+            - "8080:5000"
+    backenddb:
         image: mongo
         ports: 
-            - 27017:27017
+            - "27017:27017"

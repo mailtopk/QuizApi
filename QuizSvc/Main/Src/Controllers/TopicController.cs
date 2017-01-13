@@ -24,7 +24,8 @@ namespace TopicController
 
            var response = results.Select ( t => new Data.Topic.Topic {
                Id = t.Id,
-               Description = t.Description
+               Description = t.Description,
+               Notes = t.Notes
            }).ToList();
 
             return new ObjectResult(response);
@@ -44,7 +45,8 @@ namespace TopicController
             var topicAwaiter =  await _topicRepository.GetTopic(id);
             var result = new Data.Topic.Topic {
                 Id = topicAwaiter.Id,
-                Description = topicAwaiter.Description
+                Description = topicAwaiter.Description,
+                Notes = topicAwaiter.Notes
             };
             return new ObjectResult(result);
         }
@@ -57,14 +59,15 @@ namespace TopicController
             try
             {
                 await _topicRepository.AddTopic(new TopicDataContract.Topic {
-                    Id = topic.Id,
-                    Description = topic.Description
+                   // Id = topic.Id,
+                    Description = topic.Description,
+                    Notes = topic.Notes
                 });
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(400); // TODO - not good changes it later
+                return BadRequest();
             }
 
             return new ObjectResult(HttpStatusCode.Created);

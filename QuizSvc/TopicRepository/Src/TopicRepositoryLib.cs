@@ -15,7 +15,8 @@ namespace TopicRepositoryLib
     public class TopicRepository : ITopicRepository
     {
         private string dbName = "QuizDB";
-        private string dbUri = $"mongodb://localhost:27017/";
+        private string dbUri = $"mongodb://backenddb:27017/";
+
         private MongoUrl quizDBUrl; 
         private MongoClient quizMongoClient;
         private IMongoDatabase quizDatabase;
@@ -40,7 +41,8 @@ namespace TopicRepositoryLib
             var documents = await topicCollection.FindAsync(Builders<Topic>.Filter.Empty);
             await documents.ForEachAsync( t => topics.Add ( new Topic {
                 Id = t.Id,
-                Description = t.Description
+                Description = t.Description,
+                Notes = t.Notes 
             } ) );
 
             return topics;
@@ -50,10 +52,11 @@ namespace TopicRepositoryLib
         {
             return await Task.Run( () => new Topic()).ConfigureAwait(false);
         }
-
+        
         public async Task AddTopic(Topic topic)
         {
-            await topicCollection.InsertOneAsync(topic);
+            if( topic != null)
+                await topicCollection.InsertOneAsync(topic);
         }
     }
 }
