@@ -1,33 +1,38 @@
 # Project Details
 Web api's project is to help students, make there own Quize.
 It has three part
-   1. Topic - Topic/Chapers are root objects which contains Questions
-   2. Question - Questions fall into one topic 
-   3. Answers - Answers are the object which has one - one relations with Questions 
+   1. Topic - Topic/Chapers are root objects.
+   2. Question - Questions fall into one bucket of topic
+   3. Answers - Answers to the questions. 
 
 *Note*: This project is initial prototype 
 
 *   Directory strcture
 ```
 /QuizSvc
-  |__/AnswerRepository
-  |      |__/Src
-  |      |_/project.json
   |
-  |_/Main
+  |__/Main
   |    |_/Src
   |    |_/project.json
+  |
+  |__/TopicRepository
+  |     |_/src
+  |     |_/project.json
   |
   |__/QuestionRepository
   |       |__/Src
   |       |_/project.json
   |
+  |__/AnswerRepository
+  |      |__/Src
+  |      |_/project.json
+  |
   |__/Test
   |     |_/Topic
   |     |__/project.json
   |
-  |_/TopicRepository
-  |     |_/src
+  |_/DatabaseAccess
+  |     |_/Src
   |     |_/project.json
   |
   |_/global.json
@@ -36,21 +41,27 @@ It has three part
   |_/Readme.md
 
 ```
+* Required Software 
+    - [Microsoft dotnet core](https://www.microsoft.com/net/core) 
+    - [Docker](https://www.docker.com/)
 
 # Docker Environment
 
-### Running from Docker
-* Build and run quiz web service image
-```
-    $ docker build -t quizserver:QuizWebApiServer .
+## Using docker compose
 
-    $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
+### Build docker images (web service and mongodb)
+```
+    $ docker-compose build
 ```
 
-### Clean and remove containers
+### Run docker images
 ```
-    $ docker stop $(docker ps -a -q) - Stop all containers
-    $ docker rm $(docker ps -a -q)  - remove all containers
+    $ docker-compose up
+```
+
+### Stop containers
+```
+    $ docker-compose down 
 ```
 
 ### Remove all images
@@ -59,65 +70,51 @@ It has three part
 ```
 
 
-### Build docker compose
+## Build and run docker images (web service and mongodb) separately 
+### Build and run quiz web service image
 ```
-    docker-compose build
-```
+    $ docker build -t quizserver:QuizWebApiServer .
 
-### Run docker compose
-```
-    docker-compose up
-```
-
-### Stop containers
-```
-    docker-compose stop
+    $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
 ```
 
 ## Mongo DB
 * Attach to mongo process
 ```
-    $docker exec -it <containerId> bash
+    $ docker exec -it <containerId> bash
 ```
 
-## Building Project
-### Compaile
-```
-    cd - ../QuestionsSvc
-    $dotnet restore
+## Building Project using dotnet 
+### Restore 
 
-    cd - QuestionsSvc
-    $dotnet build
-    $dotnet run
+```
+    $ cd - ../QuizSvc/Main
+    $ dotnet restore
 ```
 
-## Create Test project
-1. Create Src and test folders
-2. Create *global.json* at root folder
-3. cd to *test* folders
-
-### Create a *test* project
+### Build 
 ```
-     $dotnet new -t xunittest
+    cd - QuizSvc/Main
+    $ dotnet build
 ```
-*   Run test
+### Run
 ```
-    $dotnet test
+    $ dotnet run
 ```
-
-### Building the solutions
-
-#### With the project.json in SolutionDir/Src/ProjectName:
+## References 
+### To Create simple dotnet console
 ```
-    $dotnet build */**/project.json
+    $ dotnet new 
 ```
-
-#### If project.json in SolutionDir/ProjectName:
-```
-    $ dotnet build **/project.json
-```
-
 ### Build lib
 ```
     $ dotnet new -t lib
+```
+### To create a *test* project
+```
+     $ dotnet new -t xunittest
+```
+###   Run test
+```
+    $ dotnet test
 ```

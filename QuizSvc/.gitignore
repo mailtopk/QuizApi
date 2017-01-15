@@ -23,6 +23,9 @@
 /TopicRepository/bin
 /TopicRepository/obj
 
+/DatabaseAccess/bin
+/DatabaseAccess/obj
+
 # Project lock jason
 /*/Project.lock.json
 

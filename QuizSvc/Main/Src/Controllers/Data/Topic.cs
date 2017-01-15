@@ -5,8 +5,9 @@ namespace Data.Topic
     [JsonObjectAttribute]
     public class    Topic
     {
-        [JsonPropertyAttribute("id")]
+        [JsonIgnoreAttribute]
         public string Id {get; set;}
+
         [JsonPropertyAttribute("Description")]
         public string Description{get; set;}
         [JsonPropertyAttribute("Notes")]

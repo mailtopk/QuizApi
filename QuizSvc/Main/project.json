@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "TopicRepository" : "1.0.0-*",
+    "DatabaseAccess" : "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0",

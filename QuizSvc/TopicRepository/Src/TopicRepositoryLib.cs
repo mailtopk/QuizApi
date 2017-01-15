@@ -1,8 +1,8 @@
 ﻿
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TopicDataContract;
-using MongoDB.Driver;
+using DataEntity;
+using QuizDataAccess;
 
 namespace TopicRepositoryLib
 {
@@ -14,38 +14,17 @@ namespace TopicRepositoryLib
     }
     public class TopicRepository : ITopicRepository
     {
-        private string dbName = "QuizDB";
-        private string dbUri = $"mongodb://backenddb:27017/";
 
-        private MongoUrl quizDBUrl; 
-        private MongoClient quizMongoClient;
-        private IMongoDatabase quizDatabase;
-        private IMongoCollection<Topic> topicCollection;
-        public TopicRepository()
-        {
-            quizDBUrl = MongoUrl.Create($"{dbUri}{dbName}");
-            quizMongoClient = new MongoClient(quizDBUrl);
-            quizDatabase = quizMongoClient.GetDatabase(dbName);
-            topicCollection = quizDatabase.GetCollection<Topic>(nameof(Topic));
-        }
+        private IQuizDataAccess<Topic> quizDataAccess;
+
+         public TopicRepository()
+         {
+             quizDataAccess = new QuizDataAccess<Topic>();
+         }
 
         public async Task<IEnumerable<Topic>> GetAllTopics()
         {
-            return await GetTopics();
-        }
-
-        private async Task<IEnumerable<Topic>> GetTopics()
-        {
-            var topics = new List<Topic>();
-
-            var documents = await topicCollection.FindAsync(Builders<Topic>.Filter.Empty);
-            await documents.ForEachAsync( t => topics.Add ( new Topic {
-                Id = t.Id,
-                Description = t.Description,
-                Notes = t.Notes 
-            } ) );
-
-            return topics;
+            return await quizDataAccess.GetAll();
         }
 
         public async Task<Topic> GetTopic(string id)
@@ -56,7 +35,7 @@ namespace TopicRepositoryLib
         public async Task AddTopic(Topic topic)
         {
             if( topic != null)
-                await topicCollection.InsertOneAsync(topic);
+                await quizDataAccess.Add(topic);
         }
     }
 }

@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TopicDataContract
+namespace DataEntity
 {
     public class Topic 
     {

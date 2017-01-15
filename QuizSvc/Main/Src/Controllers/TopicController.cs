@@ -20,15 +20,23 @@ namespace TopicController
         [HttpGet(Name="Get")]
         public async Task<IActionResult> GetAll()
         {
-           var results = await _topicRepository.GetAllTopics();
+            try
+            {
+                var results = await _topicRepository.GetAllTopics();
 
-           var response = results.Select ( t => new Data.Topic.Topic {
-               Id = t.Id,
-               Description = t.Description,
-               Notes = t.Notes
-           }).ToList();
+                var response = results.Select ( t => new  {
+                    Id = t.Id,
+                    Description = t.Description,
+                    Notes = t.Notes
+                }).ToList();
 
-            return new ObjectResult(response);
+                return new ObjectResult(response);
+            }
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+                return BadRequest();
+            }
         }
 
         
@@ -58,8 +66,7 @@ namespace TopicController
         {
             try
             {
-                await _topicRepository.AddTopic(new TopicDataContract.Topic {
-                   // Id = topic.Id,
+                await _topicRepository.AddTopic(new DataEntity.Topic {
                     Description = topic.Description,
                     Notes = topic.Notes
                 });

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "TopicRepository":"1.0.0-*",
+    "DatabaseAccess" : "1.0.0-*",
     "Main": "1.0.0-*",
     "System.Runtime.Serialization.Primitives": "4.3.0",
     "xunit": "2.1.0",

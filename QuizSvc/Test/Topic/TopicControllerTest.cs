@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using Moq;
 using TopicRepositoryLib;
-using Newtonsoft.Json.Converters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace QuizSvcTest
@@ -18,7 +15,7 @@ namespace QuizSvcTest
 
             topicRepositoryMock.Setup(
                 p => p.GetTopic(It.IsAny<string>()))
-                .ReturnsAsync(new TopicDataContract.Topic());
+                .ReturnsAsync(new DataEntity.Topic());
 
             // Act
             var topicControllerMock = new TopicController.TopicController(topicRepositoryMock.Object);
