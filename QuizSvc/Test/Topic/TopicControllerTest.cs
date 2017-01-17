@@ -14,7 +14,7 @@ namespace QuizSvcTest
             var topicRepositoryMock = new Mock<ITopicRepository>();
 
             topicRepositoryMock.Setup(
-                p => p.GetTopic(It.IsAny<string>()))
+                p => p.GetTopicAsync(It.IsAny<string>()))
                 .ReturnsAsync(new DataEntity.Topic());
 
             // Act

@@ -8,9 +8,9 @@ namespace TopicRepositoryLib
 {
     public interface ITopicRepository 
     {
-        Task<IEnumerable<Topic>> GetAllTopics();
-        Task<Topic> GetTopic(string id);
-        Task AddTopic(Topic topic);
+        Task<IEnumerable<Topic>> GetAllTopicsAsync();
+        Task<Topic> GetTopicAsync(string id);
+        Task AddTopicAsync(Topic topic);
     }
     public class TopicRepository : ITopicRepository
     {
@@ -22,20 +22,20 @@ namespace TopicRepositoryLib
              quizDataAccess = new QuizDataAccess<Topic>();
          }
 
-        public async Task<IEnumerable<Topic>> GetAllTopics()
+        public async Task<IEnumerable<Topic>> GetAllTopicsAsync()
         {
-            return await quizDataAccess.GetAll();
+            return await quizDataAccess.GetAllAsync();
         }
 
-        public async Task<Topic> GetTopic(string id)
+        public async Task<Topic> GetTopicAsync(string id)
         {
-            return await Task.Run( () => new Topic()).ConfigureAwait(false);
+            return await quizDataAccess.GetAsync("_id", id);
         }
         
-        public async Task AddTopic(Topic topic)
+        public async Task AddTopicAsync(Topic topic)
         {
             if( topic != null)
-                await quizDataAccess.Add(topic);
+                await quizDataAccess.AddAsync(topic);
         }
     }
 }

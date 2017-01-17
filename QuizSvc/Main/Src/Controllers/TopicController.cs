@@ -22,7 +22,7 @@ namespace TopicController
         {
             try
             {
-                var results = await _topicRepository.GetAllTopics();
+                var results = await _topicRepository.GetAllTopicsAsync();
 
                 var response = results.Select ( t => new  {
                     Id = t.Id,
@@ -50,13 +50,27 @@ namespace TopicController
                 return BadRequest();
             }
             
-            var topicAwaiter =  await _topicRepository.GetTopic(id);
-            var result = new Data.Topic.Topic {
-                Id = topicAwaiter.Id,
-                Description = topicAwaiter.Description,
-                Notes = topicAwaiter.Notes
-            };
-            return new ObjectResult(result);
+            try
+            {
+                var result = new Data.Topic.Topic();
+                var topicAwaiter =  await _topicRepository.GetTopicAsync(id);
+
+                if(topicAwaiter == null)
+                {
+                    Console.WriteLine("object is empty");
+                    return new OkObjectResult(result);
+                }
+                result.Id = topicAwaiter.Id;
+                result.Description = topicAwaiter.Description;
+                result.Notes = topicAwaiter.Notes;
+
+                return new ObjectResult(result);
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest();
+            }
         }
 
         [HttpPost]
@@ -66,7 +80,7 @@ namespace TopicController
         {
             try
             {
-                await _topicRepository.AddTopic(new DataEntity.Topic {
+                await _topicRepository.AddTopicAsync(new DataEntity.Topic {
                     Description = topic.Description,
                     Notes = topic.Notes
                 });

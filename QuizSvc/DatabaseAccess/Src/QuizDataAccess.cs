@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using MongoDB.Bson;
+
 namespace QuizDataAccess
 {
     public class QuizDataAccess<T> : IQuizDataAccess<T>
@@ -21,18 +23,19 @@ namespace QuizDataAccess
             collectionsOfT = quizDatabase.GetCollection<T>(typeof(T).Name);
         }
 
-        public async Task<string> Add(T newDocument)
+        public async Task<string> AddAsync(T newDocument)
         {
             await collectionsOfT.InsertOneAsync(newDocument);
             return ""; //TODO FIX THIS
         }
 
-        public T Get(T inputValue)
+        public async Task<T> GetAsync(string searchField, string searchValue)
         {
-            throw new NotImplementedException();
+            var filter = Builders<T>.Filter.Eq(searchField, ObjectId.Parse(searchValue));
+            return await collectionsOfT.Find<T>(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             var results = new List<T>();
             var documents = await collectionsOfT.FindAsync(Builders<T>.Filter.Empty);

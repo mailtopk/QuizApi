@@ -4,8 +4,8 @@ namespace QuizDataAccess
 {
     public interface IQuizDataAccess<T>
     {
-        Task<IEnumerable<T>> GetAll();
-        T Get(T inputValue);
-        Task<string> Add(T newDocument);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetAsync(string field, string value);
+        Task<string> AddAsync(T newDocument);
     }
 }
