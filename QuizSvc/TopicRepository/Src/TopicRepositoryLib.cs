@@ -17,9 +17,9 @@ namespace TopicRepositoryLib
 
         private IQuizDataAccess<Topic> quizDataAccess;
 
-         public TopicRepository()
+         public TopicRepository(IQuizDataAccess<Topic> dataAccess)
          {
-             quizDataAccess = new QuizDataAccess<Topic>();
+             quizDataAccess = dataAccess;
          }
 
         public async Task<IEnumerable<Topic>> GetAllTopicsAsync()
