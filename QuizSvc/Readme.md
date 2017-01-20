@@ -1,5 +1,5 @@
 # Project Details
-Web api's project is to help students, make there own Quize.
+Web api's project is to help students, make there own Quiz.
 It has three part
    1. Topic - Topic/Chapers are root objects.
    2. Question - Questions fall into one bucket of topic
@@ -45,9 +45,8 @@ It has three part
     - [Microsoft dotnet core](https://www.microsoft.com/net/core) 
     - [Docker](https://www.docker.com/)
 
-# Docker Environment
-
-## Using docker compose
+# Run in Docker Environment
+Docker yml build two images, API web service and backend mongodb.
 
 ### Build docker images (web service and mongodb)
 ```
@@ -59,12 +58,17 @@ It has three part
     $ docker-compose up
 ```
 
-### Stop containers
+### Run API explorer
+```
+    http://localhost:8080/swagger/ui/index.html
+```
+
+### To stop running containers
 ```
     $ docker-compose down 
 ```
 
-### Remove all images
+### To remove all images
 ```
     $ docker rmi $(docker images -a -q)
 ```
