@@ -1,0 +1,11 @@
+version: '2'
+services: 
+    webservice:
+        image: quizwebapi
+        build: .
+        ports: 
+            - "8080:5000"
+    backenddb:
+        image: mongo
+        ports: 
+            - "27017:27017"

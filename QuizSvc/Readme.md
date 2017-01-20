@@ -1,88 +1,120 @@
 # Project Details
 Web api's project is to help students, make there own Quize.
 It has three part
-   1. Topic - Topic/Chapers are root objects which contains Questions
-   2. Question - Questions fall into one topic 
-   3. Answers - Answers are the object which has one - one relations with Questions 
+   1. Topic - Topic/Chapers are root objects.
+   2. Question - Questions fall into one bucket of topic
+   3. Answers - Answers to the questions. 
 
 *Note*: This project is initial prototype 
 
 *   Directory strcture
 ```
 /QuizSvc
-  |__/AnswerRepository
-  |      |__/Src
-  |      |_/project.json
   |
-  |_/Main
+  |__/Main
   |    |_/Src
   |    |_/project.json
+  |
+  |__/TopicRepository
+  |     |_/src
+  |     |_/project.json
   |
   |__/QuestionRepository
   |       |__/Src
   |       |_/project.json
   |
+  |__/AnswerRepository
+  |      |__/Src
+  |      |_/project.json
+  |
   |__/Test
   |     |_/Topic
   |     |__/project.json
   |
-  |_/TopicRepository
-  |     |_/src
+  |_/DatabaseAccess
+  |     |_/Src
   |     |_/project.json
   |
   |_/global.json
   |_/Dockerfile
+  |_/docker-compose.yml
   |_/Readme.md
 
 ```
+* Required Software 
+    - [Microsoft dotnet core](https://www.microsoft.com/net/core) 
+    - [Docker](https://www.docker.com/)
 
-## Building Project
-### Compaile
-```
-    cd - ../QuestionsSvc
-    $dotnet restore
+# Docker Environment
 
-    cd - QuestionsSvc
-    $dotnet build
-    $dotnet run
-```
+## Using docker compose
 
-## Create Test project
-1. Create Src and test folders
-2. Create *global.json* at root folder
-3. cd to *test* folders
-
-### Create a *test* project
+### Build docker images (web service and mongodb)
 ```
-     $dotnet new -t xunittest
-```
-*   Run test
-```
-    $dotnet test
+    $ docker-compose build
 ```
 
-### Building the solutions
-
-#### With the project.json in SolutionDir/Src/ProjectName:
+### Run docker images
 ```
-$dotnet build */**/project.json
+    $ docker-compose up
 ```
 
-#### If project.json in SolutionDir/ProjectName:
+### Stop containers
 ```
-$dotnet build **/project.json
-```
-
-### Build lib
-```
-$dotnet new -t lib
+    $ docker-compose down 
 ```
 
-## Running from Docker
+### Remove all images
 ```
-Build Image
+    $ docker rmi $(docker images -a -q)
+```
+
+
+## Build and run docker images (web service and mongodb) separately 
+### Build and run quiz web service image
+```
     $ docker build -t quizserver:QuizWebApiServer .
 
-Run Image
     $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
+```
+
+## Mongo DB
+* Attach to mongo process
+```
+    $ docker exec -it <containerId> bash
+```
+
+## Building Project using dotnet 
+### Restore 
+
+```
+    $ cd - ../QuizSvc/Main
+    $ dotnet restore
+```
+
+### Build 
+```
+    cd - QuizSvc/Main
+    $ dotnet build
+```
+### Run
+```
+    $ dotnet run
+```
+## References 
+### To Create simple dotnet console
+```
+    $ dotnet new 
+```
+### Build lib
+```
+    $ dotnet new -t lib
+```
+### To create a *test* project
+```
+     $ dotnet new -t xunittest
+```
+###   Run test
+```
+    $ dotnet test
 ```

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
@@ -18,9 +18,25 @@ namespace TopicController
         }
 
         [HttpGet(Name="Get")]
-        public Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-           throw new NotImplementedException();
+            try
+            {
+                var results = await _topicRepository.GetAllTopicsAsync();
+
+                var response = results.Select ( t => new ResponseData.Topic  {
+                    Id = t.Id,
+                    Description = t.Description,
+                    Notes = t.Notes
+                }).ToList();
+
+                return new ObjectResult(response);
+            }
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+                return BadRequest();
+            }
         }
 
         
@@ -34,15 +50,47 @@ namespace TopicController
                 return BadRequest();
             }
             
-            var topicAwaiter =  await _topicRepository.GetTopic(id);
-            var result = new Data.Topic.Topic {
-                Id = topicAwaiter.Id,
-                Description = topicAwaiter.Description
-            };
+            try
+            {
+                var topicAwaiter =  await _topicRepository.GetTopicAsync(id);
+                
+                if(topicAwaiter == null)
+                    Console.WriteLine("object is empty");
 
-            return new ObjectResult(result);
+                var result = new ResponseData.Topic {
+                    Id = topicAwaiter.Id,
+                    Description = topicAwaiter.Description,
+                    Notes = topicAwaiter.Notes
+                };
+
+                return new ObjectResult(result);
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest();
+            }
         }
-        
+
+        [HttpPost]
+        [SwaggerResponseAttribute(HttpStatusCode.Created)]
+        [SwaggerResponseAttribute(HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddTopic( [FromBodyAttribute] ResponseData.TopicForAddtion topic )
+        {
+            try
+            {
+                await _topicRepository.AddTopicAsync(new DataEntity.Topic {
+                    Description = topic.Description,
+                    Notes = topic.Notes
+                });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+           // Response.Headers.Add("Location", ""); // TODO send new objectid 
+            return new StatusCodeResult((int)HttpStatusCode.Created);
+        }
     }
-    
 }

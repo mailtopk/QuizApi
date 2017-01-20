@@ -4,14 +4,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using TopicRepositoryLib;
+using DataEntity;
+using QuizDataAccess;
+
 namespace QuizSvc
 {
     public class AppStart
     {
         public void ConfigureServices(IServiceCollection services)
         {
-           services.AddTransient<ITopicRepository>( p => new TopicRepository());
+            services.AddTransient<IQuizDataAccess<Topic>>( p => new QuizDataAccess<Topic>() );
+            services.AddTransient<ITopicRepository>( p => new TopicRepository(new QuizDataAccess<Topic>()));
+            
             services.AddMvc( options => options.RespectBrowserAcceptHeader = true );
+            
             services.AddSwaggerGen(
                 option => new Swashbuckle.Swagger.Model.Info
                 {

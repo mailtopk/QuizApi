@@ -1,18 +1,41 @@
 ﻿
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using TopicDataContract;
+using DataEntity;
+using QuizDataAccess;
 
 namespace TopicRepositoryLib
 {
     public interface ITopicRepository 
     {
-        Task<Topic> GetTopic(string id);
+        Task<IEnumerable<Topic>> GetAllTopicsAsync();
+        Task<Topic> GetTopicAsync(string id);
+        Task AddTopicAsync(Topic topic);
     }
     public class TopicRepository : ITopicRepository
     {
-        public async Task<Topic> GetTopic(string id)
+
+        private IQuizDataAccess<Topic> quizDataAccess;
+
+         public TopicRepository(IQuizDataAccess<Topic> dataAccess)
+         {
+             quizDataAccess = dataAccess;
+         }
+
+        public async Task<IEnumerable<Topic>> GetAllTopicsAsync()
         {
-            return await Task.Run( () => new Topic()).ConfigureAwait(false);
+            return await quizDataAccess.GetAllAsync();
+        }
+
+        public async Task<Topic> GetTopicAsync(string id)
+        {
+            return await quizDataAccess.GetAsync("_id", id);
+        }
+        
+        public async Task AddTopicAsync(Topic topic)
+        {
+            if( topic != null)
+                await quizDataAccess.AddAsync(topic);
         }
     }
 }

@@ -1,4 +1,8 @@
 FROM microsoft/dotnet:latest
+
+MAINTAINER Prashant Pooboni
+
+
 COPY . /app
 WORKDIR /app
 
