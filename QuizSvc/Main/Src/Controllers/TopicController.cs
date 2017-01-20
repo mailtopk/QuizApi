@@ -24,7 +24,7 @@ namespace TopicController
             {
                 var results = await _topicRepository.GetAllTopicsAsync();
 
-                var response = results.Select ( t => new  {
+                var response = results.Select ( t => new ResponseData.Topic  {
                     Id = t.Id,
                     Description = t.Description,
                     Notes = t.Notes
@@ -52,17 +52,16 @@ namespace TopicController
             
             try
             {
-                var result = new Data.Topic.Topic();
                 var topicAwaiter =  await _topicRepository.GetTopicAsync(id);
-
+                
                 if(topicAwaiter == null)
-                {
                     Console.WriteLine("object is empty");
-                    return new OkObjectResult(result);
-                }
-                result.Id = topicAwaiter.Id;
-                result.Description = topicAwaiter.Description;
-                result.Notes = topicAwaiter.Notes;
+
+                var result = new ResponseData.Topic {
+                    Id = topicAwaiter.Id,
+                    Description = topicAwaiter.Description,
+                    Notes = topicAwaiter.Notes
+                };
 
                 return new ObjectResult(result);
             }
@@ -76,7 +75,7 @@ namespace TopicController
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
         [SwaggerResponseAttribute(HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddTopic( [FromBodyAttribute] Data.Topic.Topic topic )
+        public async Task<IActionResult> AddTopic( [FromBodyAttribute] ResponseData.TopicForAddtion topic )
         {
             try
             {
@@ -90,8 +89,8 @@ namespace TopicController
                 Console.WriteLine(ex.Message);
                 return BadRequest();
             }
-
-            return new ObjectResult(HttpStatusCode.Created);
+           // Response.Headers.Add("Location", ""); // TODO send new objectid 
+            return new StatusCodeResult((int)HttpStatusCode.Created);
         }
     }
 }
