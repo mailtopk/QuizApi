@@ -5,7 +5,14 @@ services:
         build: .
         ports: 
             - "8080:5000"
+        links: 
+            - "cachingservice"
+            - "backenddb"
     backenddb:
         image: mongo
         ports: 
             - "27017:27017"
+    cachingservice:
+        image: redis
+        ports: 
+            - "6379:6379"

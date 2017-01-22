@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using QuizDataAccess;
 using System.Net;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace QuizSvcTest
 {
@@ -12,19 +12,25 @@ namespace QuizSvcTest
     {
         private Mock<IQuizDataAccess<DataEntity.Topic>> mockDataAccess;
         private TopicController.TopicController topicControllerMock;
+        private Mock<IDistributedCache> mockCaching;
         public TopicTests()
         {
              mockDataAccess = new Mock<IQuizDataAccess<DataEntity.Topic>>();
-             topicControllerMock = new TopicController.TopicController(new TopicRepositoryLib.TopicRepository(mockDataAccess.Object));
+             mockCaching = new Mock<IDistributedCache>();
+
+             topicControllerMock = new TopicController.TopicController(
+                 new TopicRepositoryLib.TopicRepository(mockDataAccess.Object, mockCaching.Object));
         }
 
         [Fact]
         public  async void CanSearchTopicByTopicID()
         {
             // Arrange
-            var topicId = "587e42d3419c9d0015acbd68";
+            var topicId = "5883a3fa50f5fea2822f21cf";
             var mockResults = new DataEntity.Topic {
-                Id = topicId
+                Id = topicId,
+                Description = "mockedDescription",
+                Notes = "mockNotes"
             };
 
             mockDataAccess.Setup(
@@ -73,3 +79,9 @@ namespace QuizSvcTest
         }
     }
 }
+
+/*
+var serverStartTimeString = DateTime.Now.ToString();
+    byte[] val = Encoding.UTF8.GetBytes(serverStartTimeString);
+    cache.Set("lastServerStartTime", val);
+*/

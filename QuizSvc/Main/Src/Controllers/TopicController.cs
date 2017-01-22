@@ -55,7 +55,10 @@ namespace TopicController
                 var topicAwaiter =  await _topicRepository.GetTopicAsync(id);
                 
                 if(topicAwaiter == null)
+                {
                     Console.WriteLine("object is empty");
+                    return NoContent();
+                }
 
                 var result = new ResponseData.Topic {
                     Id = topicAwaiter.Id,
