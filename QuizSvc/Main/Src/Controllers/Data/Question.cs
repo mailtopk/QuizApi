@@ -1,23 +1,16 @@
 using Newtonsoft.Json;
-
 namespace ResponseData
 {
     [JsonObjectAttribute]
-    public class Topic
+    public class Question
     {
         [JsonPropertyAttribute("id")]
-        public virtual string Id {get; set;}
-
+        public string Id {get; set;}
+        [JsonPropertyAttribute("topicId")]
+        public string TopicId {get; set;}
         [JsonPropertyAttribute("description")]
         public string Description{get; set;}
-
         [JsonPropertyAttribute("notes")]
         public string Notes {get; set;}
-    }
-
-    public class TopicForAddtion :  Topic
-    {
-        [JsonIgnoreAttribute]
-        public override string Id { get; set; }
     }
 }

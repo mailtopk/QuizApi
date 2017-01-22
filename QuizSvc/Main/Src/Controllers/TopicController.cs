@@ -8,7 +8,7 @@ using System;
 
 namespace TopicController
 {
-    [Route("api/[Controller]")]
+    [RouteAttribute("api/topic")]
     public class TopicController : Controller
     {
         private readonly ITopicRepository _topicRepository;
@@ -17,7 +17,7 @@ namespace TopicController
             _topicRepository = topicRepository;
         }
 
-        [HttpGet(Name="Get")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -39,7 +39,6 @@ namespace TopicController
             }
         }
 
-        
         [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.OK)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -92,6 +91,7 @@ namespace TopicController
                 Console.WriteLine(ex.Message);
                 return BadRequest();
             }
+            
            // Response.Headers.Add("Location", ""); // TODO send new objectid 
             return new StatusCodeResult((int)HttpStatusCode.Created);
         }

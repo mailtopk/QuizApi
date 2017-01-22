@@ -24,7 +24,7 @@ namespace QuizSvc
                 {
                     Version = "v1",
                     Title = "Quiz web Api",
-                    Description = "Help in building web services",
+                    Description = "Build Quiz web services",
                     TermsOfService = "None"
                 }
             );
