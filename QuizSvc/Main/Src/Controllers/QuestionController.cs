@@ -4,7 +4,7 @@
 // using ResponseData;
  namespace Question
  {
-     [RouteAttribute("api/question")]
+     [RouteAttribute("api/quize/question")]
      public  class QuestionController : Controller
      {
          [HttpGet]

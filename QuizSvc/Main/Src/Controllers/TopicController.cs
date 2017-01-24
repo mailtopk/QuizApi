@@ -8,7 +8,7 @@ using System;
 
 namespace TopicController
 {
-    [RouteAttribute("api/topic")]
+    [RouteAttribute("api/quize/topic")]
     public class TopicController : Controller
     {
         private readonly ITopicRepository _topicRepository;

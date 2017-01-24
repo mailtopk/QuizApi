@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Answer
 {
-    [Route("api/answer")]
+    [Route("api/quize/answer")]
     public class Answer : Controller 
     {
 
@@ -20,7 +20,7 @@ namespace Answer
             throw new NotImplementedException();
         }
 
-        [HttpPost("answer")]
+        [HttpPost]
         public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.Answer answer)
         {
             throw new NotImplementedException();

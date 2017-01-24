@@ -5,9 +5,6 @@ services:
         build: .
         ports: 
             - "8080:5000"
-        links: 
-            - "cachingservice"
-            - "backenddb"
     backenddb:
         image: mongo
         ports: 
