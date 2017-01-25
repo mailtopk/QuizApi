@@ -8,6 +8,7 @@ using TopicRepositoryLib;
 using DataEntity;
 using QuizDataAccess;
 using Microsoft.Extensions.Caching.Distributed;
+using QuizCaching;
 
 namespace QuizSvc
 {
@@ -32,20 +33,24 @@ namespace QuizSvc
             // Redis
             // Redis can not use host name - this is workaround
             // https://github.com/StackExchange/StackExchange.Redis/issues/410
-            var redisMachineIPAddress = GetRedisContainerIPAddress();
             services.AddDistributedRedisCache(
-                options => options.Configuration = redisMachineIPAddress);
+                options => options.Configuration = GetRedisContainerIPAddress());
             
             // Data Access Layer
             services.AddTransient<IQuizDataAccess<Topic>>(p => new QuizDataAccess<Topic>());
 
             var serviceProvider = services.BuildServiceProvider();
             
+            // Cache
+            services.AddTransient<IQuizCache<Topic>>( 
+                p => new QuizCache<Topic>(serviceProvider.GetService<IDistributedCache>()) );
+
+            serviceProvider = services.BuildServiceProvider(); // TODO - why do i need to call this again ?
             // Topic Repository
             services.AddTransient<ITopicRepository>(p =>
                new TopicRepository(
                        serviceProvider.GetService<IQuizDataAccess<Topic>>(),
-                       serviceProvider.GetService<IDistributedCache>()));
+                       serviceProvider.GetService<IQuizCache<Topic>>() ));
 
         }
 

@@ -4,22 +4,24 @@ using Moq;
 using Microsoft.AspNetCore.Mvc;
 using QuizDataAccess;
 using System.Net;
-using Microsoft.Extensions.Caching.Distributed;
+using System.Threading.Tasks;
+using QuizCaching;
+using System;
 
 namespace QuizSvcTest
 {
     public class TopicTests
     {
-        private Mock<IQuizDataAccess<DataEntity.Topic>> mockDataAccess;
-        private TopicController.TopicController topicControllerMock;
-        private Mock<IDistributedCache> mockCaching;
+        private Mock<IQuizDataAccess<DataEntity.Topic>> _mockDataAccess;
+        private TopicController.TopicController _topicControllerMock;
+        private Mock<IQuizCache<DataEntity.Topic>> _mockTopicCacheMock;
         public TopicTests()
         {
-             mockDataAccess = new Mock<IQuizDataAccess<DataEntity.Topic>>();
-             mockCaching = new Mock<IDistributedCache>();
+             _mockDataAccess = new Mock<IQuizDataAccess<DataEntity.Topic>>();
+             _mockTopicCacheMock = new Mock<IQuizCache<DataEntity.Topic>>();
 
-             topicControllerMock = new TopicController.TopicController(
-                 new TopicRepositoryLib.TopicRepository(mockDataAccess.Object, mockCaching.Object));
+             _topicControllerMock = new TopicController.TopicController(
+                 new TopicRepositoryLib.TopicRepository(_mockDataAccess.Object, _mockTopicCacheMock.Object));
         }
 
         [Fact]
@@ -27,19 +29,25 @@ namespace QuizSvcTest
         {
             // Arrange
             var topicId = "5883a3fa50f5fea2822f21cf";
-            var mockResults = new DataEntity.Topic {
-                Id = topicId,
-                Description = "mockedDescription",
-                Notes = "mockNotes"
-            };
+            var mockResults = new DataEntity.Topic 
+                {
+                    Id = topicId,
+                    Description = "mockedDescription",
+                    Notes = "mockNotes"
+                };
 
-            mockDataAccess.Setup(
+            _mockTopicCacheMock.Setup( p => p.GetValueFromKeyAsync(
+                            It.IsAny<string>(),  
+                            It.IsAny<Func<string, Task<DataEntity.Topic>>>()))
+                                .ReturnsAsync(mockResults);
+
+            _mockDataAccess.Setup(
                 p => p.GetAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(mockResults)
                 .Verifiable();
 
             // Act
-            var results = await topicControllerMock.GetById(topicId);
+            var results = await _topicControllerMock.GetById(topicId);
 
             // Assert
             var actualResult = Assert.IsType<ObjectResult>(results);
@@ -56,11 +64,11 @@ namespace QuizSvcTest
                 new DataEntity.Topic()
             };
 
-            mockDataAccess.Setup(p => p.GetAllAsync())
+            _mockDataAccess.Setup(p => p.GetAllAsync())
                                 .ReturnsAsync(mockResults)
                                 .Verifiable();
 
-            var result =  await topicControllerMock.GetAll();
+            var result =  await _topicControllerMock.GetAll();
             Assert.IsType<ObjectResult>(result);
             var list = Assert.IsAssignableFrom<List<ResponseData.Topic>>(((ObjectResult)result).Value);
             Assert.Equal(mockResults.Count, list.Count);
@@ -70,18 +78,12 @@ namespace QuizSvcTest
         public async void CanAddTopic()
         {
             var mockResults = new DataEntity.Topic();
-            mockDataAccess.Setup( p => p.AddAsync(mockResults) )
+            _mockDataAccess.Setup( p => p.AddAsync(mockResults) )
                         .ReturnsAsync(string.Empty)
                         .Verifiable();
-            var result = await topicControllerMock.AddTopic(new ResponseData.TopicForAddtion());
+            var result = await _topicControllerMock.AddTopic(new ResponseData.TopicForAddtion());
             var actualResult = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal((int)HttpStatusCode.Created, actualResult.StatusCode);
         }
     }
 }
-
-/*
-var serverStartTimeString = DateTime.Now.ToString();
-    byte[] val = Encoding.UTF8.GetBytes(serverStartTimeString);
-    cache.Set("lastServerStartTime", val);
-*/

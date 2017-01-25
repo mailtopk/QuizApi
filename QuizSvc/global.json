@@ -1,10 +1,11 @@
 {
     "projects" : [
         "QuizSvc",
-        "DataAccess",
         "TopicRepository",
         "QuestionRepository",
         "AnswerRepository",
+        "Cache",
+        "DataAccess",
         "Test"
     ]
 }

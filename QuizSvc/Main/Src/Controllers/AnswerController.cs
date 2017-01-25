@@ -9,19 +9,19 @@ namespace Answer
     {
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public Task<IActionResult> GetAll()
         {
             throw new NotImplementedException();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public Task<IActionResult> Get(string id)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.Answer answer)
+        public Task<IActionResult> Add([FromBodyAttribute]ResponseData.Answer answer)
         {
             throw new NotImplementedException();
         }

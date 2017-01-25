@@ -6,28 +6,12 @@
 
 ./.vscode/
 
-# Directorys
-/obj
-/Test/obj
-/Test/bin
-
-/Main/obj
-/Main/bin
-
-/QuestionRepository/bin
-/QuestionRepository/obj
-
-/AnswerRepository/bin
-/AnswerRepository/obj
-
-/TopicRepository/bin
-/TopicRepository/obj
-
-/DatabaseAccess/bin
-/DatabaseAccess/obj
+# bin and obj Directorys
+*/bin
+*/obj
 
 # Project lock jason
-/*/Project.lock.json
+*/Project.lock.json
 
 #Ignore local scripts
 Tools/

@@ -8,19 +8,19 @@
      public  class QuestionController : Controller
      {
          [HttpGet]
-         public async Task<IActionResult>  GetAll()
+         public Task<IActionResult>  GetAll()
          {
              throw new NotImplementedException();
          } 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string Id)
+        public Task<IActionResult> Get(string Id)
         {
             throw new NotImplementedException();
         }  
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.Question question)
+        public Task<IActionResult> Add([FromBodyAttribute]ResponseData.Question question)
         {
             throw new NotImplementedException();
         }
