@@ -34,7 +34,7 @@ namespace TopicRepositoryLib
         {
             return await _quizCache.GetValueFromKeyAsync(id, async (key) => 
                 { 
-                    return await _quizDataAccess.GetAsync("_id", id);
+                    return await _quizDataAccess.GetAsync("_id", key);
                 } );
         }
 
