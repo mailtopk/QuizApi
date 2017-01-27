@@ -10,18 +10,18 @@ using System;
 
 namespace QuizSvcTest
 {
-    public class TopicTests
+    public class TopicControllerTests
     {
         private Mock<IQuizDataAccess<DataEntity.Topic>> _mockDataAccess;
         private TopicController.TopicController _topicControllerMock;
         private Mock<IQuizCache<DataEntity.Topic>> _mockTopicCacheMock;
-        public TopicTests()
+        public TopicControllerTests()
         {
              _mockDataAccess = new Mock<IQuizDataAccess<DataEntity.Topic>>();
              _mockTopicCacheMock = new Mock<IQuizCache<DataEntity.Topic>>();
 
              _topicControllerMock = new TopicController.TopicController(
-                 new TopicRepositoryLib.TopicRepository(_mockDataAccess.Object, _mockTopicCacheMock.Object));
+                 new QuizRepository.TopicRepository(_mockDataAccess.Object, _mockTopicCacheMock.Object));
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace QuizSvcTest
 
             _mockDataAccess.Setup(
                 p => p.GetAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(mockResults)
+                .ReturnsAsync( new List<DataEntity.Topic> { mockResults})
                 .Verifiable();
 
             // Act

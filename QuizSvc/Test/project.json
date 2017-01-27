@@ -7,7 +7,7 @@
     }
   },
   "dependencies": {
-    "TopicRepository":"1.0.0-*",
+    "Repository":"1.0.0-*",
     "DatabaseAccess" : "1.0.0-*",
     "Cache": "1.0.0-*",
     "Main": "1.0.0-*",
