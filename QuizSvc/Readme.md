@@ -44,15 +44,15 @@ It has three part
 * Required Software 
     - [Docker](https://www.docker.com/)
 
-# Run in Docker Environment
-Docker yml build two images, API web service and backend mongodb.
+# Docker Environment
+Docker yml build three images, Quiz API web service, mongodb and redis cacheing.
 
-### Build docker images (web service and mongodb)
+### Build docker images (web service, mongodb and redis)
 ```
     $ docker-compose build
 ```
 
-### Run docker images
+### Run docker all images
 ```
     $ docker-compose up -d
 ```
@@ -62,6 +62,7 @@ Docker yml build two images, API web service and backend mongodb.
     http://localhost:8080/swagger/ui/index.html
 ```
 
+At this point quiz web service is ready to use.
 
 
 ## Debuging
