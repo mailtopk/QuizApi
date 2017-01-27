@@ -15,25 +15,25 @@ It has three part
   |    |_/Src
   |    |_/project.json
   |
-  |__/TopicRepository
+  |__/Repository
   |     |_/src
   |     |_/project.json
-  |
-  |__/QuestionRepository
-  |       |__/Src
-  |       |_/project.json
   |
   |__/AnswerRepository
   |      |__/Src
   |      |_/project.json
   |
-  |__/Test
-  |     |_/Topic
-  |     |__/project.json
-  |
   |_/DatabaseAccess
   |     |_/Src
   |     |_/project.json
+  |
+  |_/Cache
+  |   |_/Src
+  |   |_/project.json
+  |
+  |__/Test
+  |     |_/ClassLevel
+  |     |__/project.json
   |
   |_/global.json
   |_/Dockerfile
@@ -42,20 +42,19 @@ It has three part
 
 ```
 * Required Software 
-    - [Microsoft dotnet core](https://www.microsoft.com/net/core) 
     - [Docker](https://www.docker.com/)
 
-# Run in Docker Environment
-Docker yml build two images, API web service and backend mongodb.
+# Docker Environment
+Docker yml build three images, Quiz API web service, mongodb and redis cacheing.
 
-### Build docker images (web service and mongodb)
+### Build docker images (web service, mongodb and redis)
 ```
     $ docker-compose build
 ```
 
-### Run docker images
+### Run docker all images
 ```
-    $ docker-compose up
+    $ docker-compose up -d
 ```
 
 ### Run API explorer
@@ -63,22 +62,53 @@ Docker yml build two images, API web service and backend mongodb.
     http://localhost:8080/swagger/ui/index.html
 ```
 
+At this point quiz web service is ready to use.
+
+
+## Debuging
+* Mongodb 
+Log on to mongodb containers
+
+List all the collections
+```
+    > db.getCollectionNames();
+```
+
+List all the documents in collections
+```
+    > get.<collectionname>.find()
+```
+
+
+* Redis Cache
+List all the key
+```
+    > key *
+```
+Show all the values in a give key 
+```
+    > hgetall <key>
+```
+
 ### To stop running containers
 ```
-    $ docker-compose down 
+    $ docker-compose stop $(docker ps -aq) 
 ```
 
 ### To remove all images
 ```
-    $ docker rmi $(docker images -a -q)
+    docker rmi -f $(docker images)
 ```
 
+# Build and run docker images (web service and mongodb) separately 
 
-## Build and run docker images (web service and mongodb) separately 
-### Build and run quiz web service image
+Build Quiz web service image
 ```
     $ docker build -t quizserver:QuizWebApiServer .
+```
 
+Run image
+```
     $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
 ```
 
@@ -88,7 +118,12 @@ Docker yml build two images, API web service and backend mongodb.
     $ docker exec -it <containerId> bash
 ```
 
-## Building Project using dotnet 
+# Building Project using dotnet 
+This will help in debuging application on local machine
+
+* Required Software
+    - [Microsoft dotnet core](https://www.microsoft.com/net/core) 
+
 ### Restore 
 
 ```

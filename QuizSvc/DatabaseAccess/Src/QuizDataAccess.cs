@@ -27,13 +27,22 @@ namespace QuizDataAccess
             return ""; //TODO FIX THIS
         }
 
-        public async Task<T> GetAsync(string searchField, string searchValue)
+        public async Task<IEnumerable<T>> GetAsync(string searchField, string searchValue)
         {
             if(string.IsNullOrEmpty(searchField) || string.IsNullOrEmpty(searchValue))
-                return default(T);
+                return default(IEnumerable<T>);
 
             var filter = Builders<T>.Filter.Eq(searchField, ObjectId.Parse(searchValue));
-            return await _collectionOfT.Find<T>(filter).FirstOrDefaultAsync();
+
+            var cursor = await _collectionOfT.FindAsync<T>(filter);
+
+            return await Task.Run( async () => {
+                
+                List<T> buffer = new List<T>();
+                await cursor.ForEachAsync<T>( p => buffer.Add(p));
+                
+                return buffer;
+            } );
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()

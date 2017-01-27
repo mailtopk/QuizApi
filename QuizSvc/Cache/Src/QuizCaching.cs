@@ -18,15 +18,18 @@ namespace QuizCaching
         {
             var cachedResult = await _caching.GetStringAsync(key);
 
-            if(cachedResult != null || !string.IsNullOrWhiteSpace(cachedResult))
+            if(!string.IsNullOrEmpty(cachedResult))
+            {
                 return await Task.Run(() => JsonConvert.DeserializeObject<T>(cachedResult));
+            }
             else
             {
                 var unCachedResults = await  getDataFromDiffSource.Invoke(key);
-
-                var serializeTopic = await Task.Run(() => JsonConvert.SerializeObject(unCachedResults));
-                await _caching.SetStringAsync(key, serializeTopic);
-
+                if(unCachedResults != null)
+                {
+                    var serializeTopic = await Task.Run(() => JsonConvert.SerializeObject(unCachedResults));
+                    await _caching.SetStringAsync(key, serializeTopic);
+                }
                 return unCachedResults;
             }
         }

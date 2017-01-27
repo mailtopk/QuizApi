@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
 using System.Net;
-using TopicRepositoryLib;
+using QuizRepository;
 using System;
 
 namespace TopicController
@@ -55,7 +55,6 @@ namespace TopicController
                 
                 if(topicAwaiter == null)
                 {
-                    Console.WriteLine("object is empty");
                     return NoContent();
                 }
 

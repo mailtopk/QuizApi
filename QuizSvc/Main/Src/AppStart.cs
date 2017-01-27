@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using TopicRepositoryLib;
 using DataEntity;
 using QuizDataAccess;
 using Microsoft.Extensions.Caching.Distributed;
 using QuizCaching;
+using QuizRepository;
 
 namespace QuizSvc
 {
@@ -38,19 +38,30 @@ namespace QuizSvc
             
             // Data Access Layer
             services.AddTransient<IQuizDataAccess<Topic>>(p => new QuizDataAccess<Topic>());
+            services.AddTransient<IQuizDataAccess<DataEntity.Question>>(p => new QuizDataAccess<DataEntity.Question>());
 
             var serviceProvider = services.BuildServiceProvider();
             
-            // Cache
+            // Topic Cache
             services.AddTransient<IQuizCache<Topic>>( 
-                p => new QuizCache<Topic>(serviceProvider.GetService<IDistributedCache>()) );
+                p => new QuizCache<Topic>(serviceProvider.GetService<IDistributedCache>()));
+            // Question Cache
+            services.AddTransient<IQuizCache<DataEntity.Question>>(
+                p => new QuizCache<DataEntity.Question>(serviceProvider.GetService<IDistributedCache>()));
 
             serviceProvider = services.BuildServiceProvider(); // TODO - why do i need to call this again ?
+            
             // Topic Repository
             services.AddTransient<ITopicRepository>(p =>
                new TopicRepository(
                        serviceProvider.GetService<IQuizDataAccess<Topic>>(),
                        serviceProvider.GetService<IQuizCache<Topic>>() ));
+            
+            // Answer Repository
+            services.AddTransient<IQuestionRepository>( 
+                p => new QuestionRepository(
+                    serviceProvider.GetService<IQuizDataAccess<DataEntity.Question>>(),
+                    serviceProvider.GetService<IQuizCache<DataEntity.Question>>()));
 
         }
 

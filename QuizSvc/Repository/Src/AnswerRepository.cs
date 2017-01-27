@@ -1,6 +1,6 @@
 ﻿
 
-namespace ClassLibrary
+namespace QuizRepository
 {
     public class Class1
     {

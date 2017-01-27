@@ -1,9 +1,7 @@
 {
     "projects" : [
         "QuizSvc",
-        "TopicRepository",
-        "QuestionRepository",
-        "AnswerRepository",
+        "Repository",
         "Cache",
         "DataAccess",
         "Test"

@@ -1,28 +1,75 @@
  using System;
- using System.Threading.Tasks;
+ using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
  using Microsoft.AspNetCore.Mvc;
-// using ResponseData;
- namespace Question
+ using QuizRepository;
+using Swashbuckle.SwaggerGen.Annotations;
+
+namespace Question
  {
      [RouteAttribute("api/quize/question")]
      public  class QuestionController : Controller
      {
-         [HttpGet]
-         public Task<IActionResult>  GetAll()
+         private IQuestionRepository _questionRepository;
+         public QuestionController(IQuestionRepository questionRepository)
          {
-             throw new NotImplementedException();
+             _questionRepository = questionRepository;
+         }
+
+         [HttpGet]
+         public async Task<IActionResult>  GetAll()
+         {
+             var results = await _questionRepository.GetAllQuestionsAsync();
+             var response = results.Select( q => new ResponseData.Question {
+                 Id = q.Id,
+                 TopicId = q.TopicId,
+                 Description = q.Description,
+                 Notes = q.Notes
+             } );
+
+             return new OkObjectResult(response);
          } 
 
         [HttpGet("{id}")]
-        public Task<IActionResult> Get(string Id)
+        [SwaggerResponse(HttpStatusCode.NotFound)]
+        public async Task<IActionResult> Get(string id)
         {
-            throw new NotImplementedException();
+            var result = await _questionRepository.GetQuestionAsync(id);
+            
+            if(result != null)
+            {
+                var response = new ResponseData.Question {
+                        Id = result.Id,
+                        TopicId = result.TopicId,
+                        Description = result.Description,
+                        Notes = result.Notes
+                    };
+                return new OkObjectResult(response);
+            }
+            
+            return NotFound();
         }  
 
         [HttpPost]
-        public Task<IActionResult> Add([FromBodyAttribute]ResponseData.Question question)
+        [SwaggerResponseAttribute(HttpStatusCode.Created)]
+        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.QuestionsForAddtion question)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _questionRepository.AddQuestionAsync( new DataEntity.Question {
+                        TopicId = question.TopicId,
+                        Description = question.Description,
+                        Notes = question.Notes
+                });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest();
+            }
+            
+            return new StatusCodeResult((int)HttpStatusCode.Created);
         }
      }
  }

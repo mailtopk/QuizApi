@@ -1,12 +1,12 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DataEntity;
 using QuizDataAccess;
-using Newtonsoft.Json;
 using QuizCaching;
 
-namespace TopicRepositoryLib
+namespace QuizRepository
 {
     public interface ITopicRepository
     {
@@ -34,7 +34,8 @@ namespace TopicRepositoryLib
         {
             return await _quizCache.GetValueFromKeyAsync(id, async (key) => 
                 { 
-                    return await _quizDataAccess.GetAsync("_id", key);
+                    var result = await _quizDataAccess.GetAsync("_id", key);
+                    return result.FirstOrDefault();
                 } );
         }
 
