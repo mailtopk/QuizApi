@@ -52,6 +52,12 @@ namespace QuizDataAccess
             await documents.ForEachAsync(p => results.Add(p));
             return results;
         }
+
+        public async Task Delete(string id)
+        {
+            var filter = Builders<T>.Filter.Eq("_id", ObjectId.Parse(id));
+            await _collectionOfT.DeleteOneAsync(filter);
+        }
     }
 }
 

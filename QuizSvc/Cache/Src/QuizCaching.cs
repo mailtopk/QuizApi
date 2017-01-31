@@ -14,7 +14,7 @@ namespace QuizCaching
             _caching = cache;
         }
 
-        public async Task<T> GetValueFromKeyAsync(string key, Func<string, Task<T>> getDataFromDiffSource)
+        public async Task<T> GetValueFromKeyAsync(string key, Func<string, Task<T>> asyncCallback)
         {
             var cachedResult = await _caching.GetStringAsync(key);
 
@@ -24,7 +24,7 @@ namespace QuizCaching
             }
             else
             {
-                var unCachedResults = await  getDataFromDiffSource.Invoke(key);
+                var unCachedResults = await  asyncCallback.Invoke(key);
                 if(unCachedResults != null)
                 {
                     var serializeTopic = await Task.Run(() => JsonConvert.SerializeObject(unCachedResults));
@@ -38,6 +38,14 @@ namespace QuizCaching
         {
               var serializedResult = await Task.Run(() => JsonConvert.SerializeObject(objectValue));
               await _caching.SetStringAsync(key, serializedResult);
+        }
+
+        public async Task DeletFromCacheAsync(string key, Func<Task> asyncCallback)
+        {
+            await _caching.RemoveAsync(key);
+
+            if(asyncCallback != null)
+                await asyncCallback.Invoke();
         }
     }
 }

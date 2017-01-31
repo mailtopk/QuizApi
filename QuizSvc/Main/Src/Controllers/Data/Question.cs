@@ -20,7 +20,7 @@ namespace ResponseData
 
     public class QuestionsForAddtion : Question
     {
-         [JsonIgnoreAttribute]
+        [JsonIgnoreAttribute]
         public override string Id { get; set; }
     }
 }
