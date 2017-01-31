@@ -11,8 +11,8 @@ namespace Answer
     [Route("api/quize/answer")]
     public class AnswerController : Controller 
     {
-        private IAnserRepository _answerRepository;
-        public AnswerController(IAnserRepository answerRepository)
+        private IAnswerRepository _answerRepository;
+        public AnswerController(IAnswerRepository answerRepository)
         {
             _answerRepository = answerRepository;
         }

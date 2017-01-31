@@ -24,11 +24,7 @@ namespace QuizCaching
             }
             else
             {
-<<<<<<< HEAD
-                var unCachedResults = await  getDataFromDiffSource.Invoke(key);
-=======
                 var unCachedResults = await  asyncCallback.Invoke(key);
->>>>>>> AddQuestionAnswerEndpoints
                 if(unCachedResults != null)
                 {
                     var serializeTopic = await Task.Run(() => JsonConvert.SerializeObject(unCachedResults));

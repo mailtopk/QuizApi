@@ -1,9 +1,9 @@
- using System;
- using System.Linq;
+using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
- using Microsoft.AspNetCore.Mvc;
- using QuizRepository;
+using Microsoft.AspNetCore.Mvc;
+using QuizRepository;
 using Swashbuckle.SwaggerGen.Annotations;
 
 namespace Question
@@ -18,19 +18,7 @@ namespace Question
          }
 
          [HttpGet]
-<<<<<<< HEAD
-         public async Task<IActionResult>  GetAll()
-         {
-             var results = await _questionRepository.GetAllQuestionsAsync();
-             var response = results.Select( q => new ResponseData.Question {
-                 Id = q.Id,
-                 TopicId = q.TopicId,
-                 Description = q.Description,
-                 Notes = q.Notes
-             } );
 
-             return new OkObjectResult(response);
-=======
          [SwaggerResponse(HttpStatusCode.BadRequest)]
          public async Task<IActionResult>  GetAll()
          {
@@ -51,7 +39,6 @@ namespace Question
                  Console.WriteLine($"[Error ] {ex}");
                  return BadRequest();
              }
->>>>>>> AddQuestionAnswerEndpoints
          } 
 
         [HttpGet("{id}")]
