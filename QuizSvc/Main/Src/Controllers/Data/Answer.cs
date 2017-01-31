@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace ResponseData
@@ -6,13 +7,20 @@ namespace ResponseData
     public class Answer
     {
         [JsonProperty("id")]
-        public string Id {get; set;}
+        public virtual string Id {get; set;}
         [JsonProperty("questionId")]
+        [RequiredAttribute]
         public string QuestionId {get; set;}
         [JsonProperty("description")]
+        [RequiredAttribute]
         public string Description{get; set;}
         [JsonProperty("notes")]
         public string Notes{get; set;}
+    }
 
+    public class AnswerForAddtion : Answer
+    {
+        [JsonIgnoreAttribute]
+        public override string Id { get; set; }
     }
 }

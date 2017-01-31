@@ -9,6 +9,10 @@ using QuizDataAccess;
 using Microsoft.Extensions.Caching.Distributed;
 using QuizCaching;
 using QuizRepository;
+<<<<<<< HEAD
+=======
+using Swashbuckle.Swagger.Model;
+>>>>>>> AddQuestionAnswerEndpoints
 
 namespace QuizSvc
 {
@@ -18,17 +22,13 @@ namespace QuizSvc
         {
 
             services.AddMvc(options => options.RespectBrowserAcceptHeader = true);
-
-            // Swagger
-            services.AddSwaggerGen(
-                option => new Swashbuckle.Swagger.Model.Info
+            services.AddSwaggerGen ( options =>  options.SingleApiVersion(new Info
                 {
                     Version = "v1",
-                    Title = "Quiz web Api",
-                    Description = "Build Quiz web services",
-                    TermsOfService = "None"
-                }
-            );
+                    Title = "Flash Card Web API",
+                    Description = "Build for Quiz and Flash card",
+                    TermsOfService = "Contact ppkumar.email@gmail.com",
+            }));
 
             // Redis
             // Redis can not use host name - this is workaround
@@ -37,31 +37,61 @@ namespace QuizSvc
                 options => options.Configuration = GetRedisContainerIPAddress());
             
             // Data Access Layer
+<<<<<<< HEAD
             services.AddTransient<IQuizDataAccess<Topic>>(p => new QuizDataAccess<Topic>());
             services.AddTransient<IQuizDataAccess<DataEntity.Question>>(p => new QuizDataAccess<DataEntity.Question>());
+=======
+            services.AddTransient<IQuizDataAccess<Topic>>(t => new QuizDataAccess<Topic>());
+            services.AddTransient<IQuizDataAccess<DataEntity.Question>>(q => new QuizDataAccess<DataEntity.Question>());
+            services.AddTransient<IQuizDataAccess<DataEntity.Answer>>( a  => new QuizDataAccess<DataEntity.Answer>());
+>>>>>>> AddQuestionAnswerEndpoints
 
             var serviceProvider = services.BuildServiceProvider();
             
             // Topic Cache
             services.AddTransient<IQuizCache<Topic>>( 
+<<<<<<< HEAD
                 p => new QuizCache<Topic>(serviceProvider.GetService<IDistributedCache>()));
             // Question Cache
             services.AddTransient<IQuizCache<DataEntity.Question>>(
                 p => new QuizCache<DataEntity.Question>(serviceProvider.GetService<IDistributedCache>()));
+=======
+                tc => new QuizCache<Topic>(serviceProvider.GetService<IDistributedCache>()));
+            // Question Cache
+            services.AddTransient<IQuizCache<DataEntity.Question>>(
+                pc => new QuizCache<DataEntity.Question>(serviceProvider.GetService<IDistributedCache>()));
+            // Answer Cache
+            services.AddTransient<IQuizCache<DataEntity.Answer>>(
+                ac => new QuizCache<DataEntity.Answer>(serviceProvider.GetService<IDistributedCache>()));
+>>>>>>> AddQuestionAnswerEndpoints
 
             serviceProvider = services.BuildServiceProvider(); // TODO - why do i need to call this again ?
             
             // Topic Repository
-            services.AddTransient<ITopicRepository>(p =>
+            services.AddTransient<ITopicRepository>( tr =>
                new TopicRepository(
                        serviceProvider.GetService<IQuizDataAccess<Topic>>(),
                        serviceProvider.GetService<IQuizCache<Topic>>() ));
             
+<<<<<<< HEAD
             // Answer Repository
             services.AddTransient<IQuestionRepository>( 
                 p => new QuestionRepository(
                     serviceProvider.GetService<IQuizDataAccess<DataEntity.Question>>(),
                     serviceProvider.GetService<IQuizCache<DataEntity.Question>>()));
+=======
+            // Question Repository
+            services.AddTransient<IQuestionRepository>( 
+                pr => new QuestionRepository(
+                    serviceProvider.GetService<IQuizDataAccess<DataEntity.Question>>(),
+                    serviceProvider.GetService<IQuizCache<DataEntity.Question>>()));
+
+            // Answer Repository
+            services.AddTransient<IAnserRepository>( 
+                ar => new AnswerRepository(
+                    serviceProvider.GetService<IQuizDataAccess<DataEntity.Answer>>(),
+                    serviceProvider.GetService<IQuizCache<DataEntity.Answer>>()));
+>>>>>>> AddQuestionAnswerEndpoints
 
         }
 
@@ -85,7 +115,6 @@ namespace QuizSvc
             app.UseSwagger();
             app.UseSwaggerUi();
             app.UseMvcWithDefaultRoute();
-
         }
     }
 }

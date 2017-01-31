@@ -17,6 +17,10 @@ namespace DataEntity
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id {get; set;}
+<<<<<<< HEAD
+=======
+        [BsonId]
+>>>>>>> AddQuestionAnswerEndpoints
         public string TopicId {get; set;}
         public string Description{get; set;}
         public string Notes {get; set;}

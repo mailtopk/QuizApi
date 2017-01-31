@@ -20,7 +20,11 @@ namespace ResponseData
 
     public class QuestionsForAddtion : Question
     {
+<<<<<<< HEAD
          [JsonIgnoreAttribute]
+=======
+        [JsonIgnoreAttribute]
+>>>>>>> AddQuestionAnswerEndpoints
         public override string Id { get; set; }
     }
 }

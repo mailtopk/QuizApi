@@ -7,5 +7,6 @@ namespace QuizDataAccess
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetAsync(string field, string value);
         Task<string> AddAsync(T newDocument);
+        Task Delete(string answerId);
     }
 }

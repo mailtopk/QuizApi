@@ -18,6 +18,7 @@ namespace Question
          }
 
          [HttpGet]
+<<<<<<< HEAD
          public async Task<IActionResult>  GetAll()
          {
              var results = await _questionRepository.GetAllQuestionsAsync();
@@ -29,6 +30,28 @@ namespace Question
              } );
 
              return new OkObjectResult(response);
+=======
+         [SwaggerResponse(HttpStatusCode.BadRequest)]
+         public async Task<IActionResult>  GetAll()
+         {
+             try
+             {
+                var results = await _questionRepository.GetAllQuestionsAsync();
+                var response = results.Select( q => new ResponseData.Question {
+                    Id = q.Id,
+                    TopicId = q.TopicId,
+                    Description = q.Description,
+                    Notes = q.Notes
+                } );
+
+                return new OkObjectResult(response);
+             }
+             catch(Exception ex)
+             {
+                 Console.WriteLine($"[Error ] {ex}");
+                 return BadRequest();
+             }
+>>>>>>> AddQuestionAnswerEndpoints
          } 
 
         [HttpGet("{id}")]
@@ -50,6 +73,31 @@ namespace Question
             
             return NotFound();
         }  
+
+        [HttpGet("{topicId}/questions")]
+        public async Task<IActionResult> GetQuestions(string topicId)
+        {
+            try
+            {
+                var results = await _questionRepository.GetQuestionsByTopic(topicId);
+                if(results.Any())
+                {
+                    var response = results.Select( q => new ResponseData.Question {
+                        Id = q.Id,
+                        TopicId = q.TopicId,
+                        Description = q.Description,
+                        Notes = q.Notes
+                    } );
+                    return new OkObjectResult(response);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"[Error ] : {ex}");
+                return BadRequest();
+            }
+            return NotFound();
+        }
 
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
