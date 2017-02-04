@@ -8,13 +8,16 @@ using Swashbuckle.SwaggerGen.Annotations;
 
 namespace Question
  {
-     [RouteAttribute("api/quize/question")]
+     [RouteAttribute("api/quiz/question")]
      public  class QuestionController : Controller
      {
          private IQuestionRepository _questionRepository;
-         public QuestionController(IQuestionRepository questionRepository)
+         private ITopicRepository _topicRepository;
+         public QuestionController(IQuestionRepository questionRepository, 
+            ITopicRepository topicRepository)
          {
              _questionRepository = questionRepository;
+             _topicRepository = topicRepository;
          }
 
          [HttpGet]
@@ -91,7 +94,12 @@ namespace Question
         public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.QuestionsForAddtion question)
         {
             try
-            {
+            {   var topic = await _topicRepository.GetTopicAsync( question.TopicId );
+                if( topic == null )
+                {
+                    return BadRequest("Topic not found");
+                }
+
                 await _questionRepository.AddQuestionAsync( new DataEntity.Question {
                         TopicId = question.TopicId,
                         Description = question.Description,

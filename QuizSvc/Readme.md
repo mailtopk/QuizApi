@@ -23,11 +23,11 @@ It has three part
   |      |__/Src
   |      |_/project.json
   |
-  |_/DatabaseAccess
+  |__/DatabaseAccess
   |     |_/Src
   |     |_/project.json
   |
-  |_/Cache
+  |__/Cache
   |   |_/Src
   |   |_/project.json
   |
@@ -35,10 +35,10 @@ It has three part
   |     |_/ClassLevel
   |     |__/project.json
   |
-  |_/global.json
-  |_/Dockerfile
-  |_/docker-compose.yml
-  |_/Readme.md
+  |__/global.json
+  |__/Dockerfile
+  |__/docker-compose.yml
+  |__/Readme.md
 
 ```
 * Required Software 
@@ -52,7 +52,7 @@ Docker yml build three images, Quiz API web service, mongodb and redis cacheing.
     $ docker-compose build
 ```
 
-### Run docker all images
+### Build step can be skiped and directly run docker images
 ```
     $ docker-compose up -d
 ```
@@ -66,8 +66,19 @@ At this point quiz web service is ready to use.
 
 
 ## Debuging
+
+* Docker force create images
+```
+    docker-compose build --force-rm --no-cache
+    docker-compose up --force-recreate
+```
 * Mongodb 
 Log on to mongodb containers
+
+List dbs
+```
+    > Show dbs
+```
 
 List all the collections
 ```

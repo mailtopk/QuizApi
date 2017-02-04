@@ -8,7 +8,7 @@ using Swashbuckle.SwaggerGen.Annotations;
 
 namespace Answer
 {
-    [Route("api/quize/answer")]
+    [Route("api/quiz/answer")]
     public class AnswerController : Controller 
     {
         private IAnswerRepository _answerRepository;
@@ -72,7 +72,7 @@ namespace Answer
             return new NotFoundResult();
         }
 
-        [HttpGetAttribute("{questionId}/answer")]
+        [HttpGetAttribute("{questionId}")]
         public async Task<IActionResult> GetAnswerByQuestionId(string questionId)
         {
             try
@@ -95,6 +95,17 @@ namespace Answer
             }
 
             return NotFound();
+        }
+
+        [HttpGet("{topicId}")]
+        public Task<IActionResult> GetAnswersByTopicId(string topicId)
+        {
+            // Validate topic id
+            // Get all questions for given topicId
+            //  - Get answer for each questions 
+            // return the collection
+
+            throw new NotImplementedException();
         }
 
         [HttpPost]

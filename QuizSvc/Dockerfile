@@ -6,6 +6,9 @@ MAINTAINER Prashant Pooboni
 COPY . /app
 WORKDIR /app
 
+# Add certificate
+#ADD you_certificate.crt:/container/cert/path
+
 # Restore from global.json
 RUN ["dotnet", "restore"]
 

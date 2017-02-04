@@ -17,8 +17,6 @@ namespace DataEntity
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id {get; set;}
-        
-        [BsonId]
         public string TopicId {get; set;}
         public string Description{get; set;}
         public string Notes {get; set;}
