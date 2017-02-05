@@ -72,12 +72,16 @@ At this point quiz web service is ready to use.
     docker-compose build --force-rm --no-cache
     docker-compose up --force-recreate
 ```
+* Get container info
+``` 
+    $ docker inspect <containerId>
+``` 
 * Mongodb 
 Log on to mongodb containers
 
 List dbs
 ```
-    > Show dbs
+    > show dbs
 ```
 
 List all the collections

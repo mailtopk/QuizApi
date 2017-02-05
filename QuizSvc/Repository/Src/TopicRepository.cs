@@ -34,7 +34,7 @@ namespace QuizRepository
         {
             return await _quizCache.GetValueFromKeyAsync(id, async (key) => 
                 { 
-                    var result = await _quizDataAccess.GetAsync("_id", key);
+                    var result = await _quizDataAccess.GetByIdAsync("_id", key);
                     return result.FirstOrDefault();
                 } );
         }

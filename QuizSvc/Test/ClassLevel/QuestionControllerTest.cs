@@ -49,7 +49,7 @@ namespace QuizSvcTest
                         .ReturnsAsync(string.Empty)
                         .Verifiable();
             
-            var result = await _questionControllerMock.Add(new ResponseData.QuestionsForAddtion());
+            var result = await _questionControllerMock.Add(new ResponseData.QuestionsIgnoreId());
             var actualResult = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal((int)HttpStatusCode.Created, actualResult.StatusCode);
         }
@@ -72,7 +72,7 @@ namespace QuizSvcTest
                                             .ReturnsAsync(mockResults.FirstOrDefault())
                                             .Verifiable();
 
-            _mockQuestionDataAccess.Setup( p => p.GetAsync( It.IsAny<string>(), It.IsAny<string>()))
+            _mockQuestionDataAccess.Setup( p => p.GetByIdAsync( It.IsAny<string>(), It.IsAny<string>()))
                             .ReturnsAsync( mockResults)
                             .Verifiable();
 

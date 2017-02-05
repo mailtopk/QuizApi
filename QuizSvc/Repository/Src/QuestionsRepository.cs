@@ -41,14 +41,14 @@ namespace QuizRepository
         {
              return await _quizCache.GetValueFromKeyAsync(questionId, async (key) =>  {
 
-                     var result = await _quizDataAccess.GetAsync("_id", key);
+                     var result = await _quizDataAccess.GetByIdAsync("_id", key);
                      return result.FirstOrDefault();
              });
         }
 
         public async Task<IEnumerable<Question>> GetQuestionsByTopic(string topicId)
         {
-            return await _quizDataAccess.GetAsync("TopicId", topicId);
+            return await _quizDataAccess.GetByFieldNameAsync("TopicId", topicId);
         }
     }
 }

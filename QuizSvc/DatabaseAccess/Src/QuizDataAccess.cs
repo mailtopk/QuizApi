@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using MongoDB.Driver.Linq;
 
 namespace QuizDataAccess
 {
@@ -27,7 +28,7 @@ namespace QuizDataAccess
             return ""; //TODO FIX THIS
         }
 
-        public async Task<IEnumerable<T>> GetAsync(string searchField, string searchValue)
+        public async Task<IEnumerable<T>> GetByIdAsync(string searchField, string searchValue)
         {
             if(string.IsNullOrEmpty(searchField) || string.IsNullOrEmpty(searchValue))
                 return default(IEnumerable<T>);
@@ -45,6 +46,22 @@ namespace QuizDataAccess
             } );
         }
 
+        // TODO combine GetByIdAsync
+        public async Task<IEnumerable<T>> GetByFieldNameAsync(string fieldName, string searchString )
+        {
+            System.Console.WriteLine($"Field Name : {fieldName} Search String{searchString}");
+            var filter = Builders<T>.Filter.Eq(fieldName, searchString);
+
+            var cursor = await _collectionOfT.FindAsync<T>(filter);
+
+            return await Task.Run( async () => {
+                
+                List<T> buffer = new List<T>();
+                await cursor.ForEachAsync<T>( p => buffer.Add(p));
+                
+                return buffer;
+            } );
+        }
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             var results = new List<T>();

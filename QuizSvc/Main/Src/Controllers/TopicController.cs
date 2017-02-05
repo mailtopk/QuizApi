@@ -8,7 +8,7 @@ using System;
 
 namespace TopicController
 {
-    [RouteAttribute("api/quiz/topic")]
+    [RouteAttribute("api/quiz/topics")]
     public class TopicController : Controller
     {
         private readonly ITopicRepository _topicRepository;
@@ -73,10 +73,22 @@ namespace TopicController
             }
         }
 
+        [HttpPut("{id}")]
+        public Task<IActionResult> Update(string id, [FromBodyAttribute] ResponseData.TopicIgnoreUniqId topic )
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpDelete("{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
         [SwaggerResponseAttribute(HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddTopic( [FromBodyAttribute] ResponseData.TopicForAddtion topic )
+        public async Task<IActionResult> AddTopic( [FromBodyAttribute] ResponseData.TopicIgnoreUniqId topic )
         {
             try
             {
@@ -94,5 +106,18 @@ namespace TopicController
            // Response.Headers.Add("Location", ""); // TODO send new objectid 
             return new StatusCodeResult((int)HttpStatusCode.Created);
         }
+
+        [HttpGet("{topicId}/questions")]
+        public Task<IActionResult> GetAllQuestions(string topicId)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpGet("{topicId}/{questionId}/answer")]
+        public Task<IActionResult> GetAnswer(string topicId, string question)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

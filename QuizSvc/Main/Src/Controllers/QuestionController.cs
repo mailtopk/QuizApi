@@ -8,7 +8,7 @@ using Swashbuckle.SwaggerGen.Annotations;
 
 namespace Question
  {
-     [RouteAttribute("api/quiz/question")]
+     [RouteAttribute("api/quiz/questions")]
      public  class QuestionController : Controller
      {
          private IQuestionRepository _questionRepository;
@@ -64,7 +64,7 @@ namespace Question
             return NotFound();
         }  
 
-        [HttpGet("{topicId}/questions")]
+        [HttpGet("{topicId}")]
         public async Task<IActionResult> GetQuestions(string topicId)
         {
             try
@@ -91,7 +91,7 @@ namespace Question
 
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
-        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.QuestionsForAddtion question)
+        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.QuestionsIgnoreId question)
         {
             try
             {   var topic = await _topicRepository.GetTopicAsync( question.TopicId );
@@ -113,6 +113,18 @@ namespace Question
             }
             
             return new StatusCodeResult((int)HttpStatusCode.Created);
+        }
+
+        [HttpDelete("{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPut("{id}")]
+        public Task<IActionResult> Update(string id, [FromBodyAttribute] ResponseData.QuestionsIgnoreId question )
+        {
+            throw new NotImplementedException();
         }
      }
  }

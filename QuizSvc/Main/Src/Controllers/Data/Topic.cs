@@ -15,7 +15,7 @@ namespace ResponseData
         public string Notes {get; set;}
     }
 
-    public class TopicForAddtion :  Topic
+    public class TopicIgnoreUniqId :  Topic
     {
         [JsonIgnoreAttribute]
         public override string Id { get; set; }

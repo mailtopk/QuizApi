@@ -18,7 +18,7 @@ namespace ResponseData
         public string Notes{get; set;}
     }
 
-    public class AnswerForAddtion : Answer
+    public class AnswerForIgnoreId : Answer
     {
         [JsonIgnoreAttribute]
         public override string Id { get; set; }

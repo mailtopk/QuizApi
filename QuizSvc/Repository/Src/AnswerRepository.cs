@@ -39,21 +39,19 @@ namespace QuizRepository
         public Task<Answer> GetAnswer(string id)
         {
             return _cache.GetValueFromKeyAsync(id, async key => {
-                var result = await _quizDataAccess.GetAsync("_id", key);
+                var result = await _quizDataAccess.GetByIdAsync("_id", key);
                 return result.FirstOrDefault();
             });
         }
 
         public async Task<Answer> GetAnswerByQuestionId(string questiondId)
         {
-            var result  = await _quizDataAccess.GetAsync("questiondId", questiondId);
+            var result  = await _quizDataAccess.GetByIdAsync("questiondId", questiondId);
             return result.FirstOrDefault();
         }
 
         public async Task Delete(string answerId)
         {
-            System.Console.WriteLine($"[Debug ] deleting answer - {answerId}");
-
             await _cache.DeletFromCacheAsync( answerId, async () => 
                 await _quizDataAccess.Delete(answerId)
             );

@@ -42,7 +42,7 @@ namespace QuizSvcTest
                                 .ReturnsAsync(mockResults);
 
             _mockDataAccess.Setup(
-                p => p.GetAsync(It.IsAny<string>(), It.IsAny<string>()))
+                p => p.GetByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync( new List<DataEntity.Topic> { mockResults})
                 .Verifiable();
 
@@ -81,7 +81,7 @@ namespace QuizSvcTest
             _mockDataAccess.Setup( p => p.AddAsync(mockResults) )
                         .ReturnsAsync(string.Empty)
                         .Verifiable();
-            var result = await _topicControllerMock.AddTopic(new ResponseData.TopicForAddtion());
+            var result = await _topicControllerMock.AddTopic(new ResponseData.TopicIgnoreUniqId());
             var actualResult = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal((int)HttpStatusCode.Created, actualResult.StatusCode);
         }
