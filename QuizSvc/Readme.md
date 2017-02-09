@@ -13,15 +13,17 @@ It has three part
   |
   |__/Main
   |    |_/Src
+  |    |    |_/Controllers
+  |    |    |_/QuizManager
+  |    |    |_/ResponseData
   |    |_/project.json
   |
   |__/Repository
   |     |_/src
+  |     |    |__/TopicRepository
+  |     |    |__/QuestionsRepository
+  |     |    |_/AnswerRepository
   |     |_/project.json
-  |
-  |__/AnswerRepository
-  |      |__/Src
-  |      |_/project.json
   |
   |__/DatabaseAccess
   |     |_/Src
@@ -56,8 +58,15 @@ Docker yml build three images, Quiz API web service, mongodb and redis cacheing.
 ```
     $ docker-compose up -d
 ```
+At this point docker container's should be up and running.
+
+### Get list of running container
+```
+    $ docker ps --format "table {{.ID}} \t{{.Image}} \t{{.Names}} \t{{.Ports}}"
+``` 
 
 ### Run API explorer
+Get list of all the enpoint, below api explorer
 ```
     http://localhost:8080/swagger/ui/index.html
 ```
