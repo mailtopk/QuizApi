@@ -1,23 +1,21 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using QuizRepository;
 using Swashbuckle.SwaggerGen.Annotations;
+using QuizManager;
+using ResponseData;
 
 namespace Question
- {
-     [RouteAttribute("api/quiz/questions")]
+{
+    [RouteAttribute("api/quiz/questions")]
      public  class QuestionController : Controller
      {
-         private IQuestionRepository _questionRepository;
-         private ITopicRepository _topicRepository;
-         public QuestionController(IQuestionRepository questionRepository, 
-            ITopicRepository topicRepository)
+         private IQuizManager _quizManager;
+         public QuestionController(
+            IQuizManager quizManager)
          {
-             _questionRepository = questionRepository;
-             _topicRepository = topicRepository;
+             _quizManager = quizManager;
          }
 
          [HttpGet]
@@ -27,19 +25,12 @@ namespace Question
          {
              try
              {
-                var results = await _questionRepository.GetAllQuestionsAsync();
-                var response = results.Select( q => new ResponseData.Question {
-                    Id = q.Id,
-                    TopicId = q.TopicId,
-                    Description = q.Description,
-                    Notes = q.Notes
-                } );
-
+                var response = await _quizManager.GetAllQuestions();
                 return new OkObjectResult(response);
              }
              catch(Exception ex)
              {
-                 Console.WriteLine($"[Error ] {ex}");
+                 Console.WriteLine($"[Error ]{ex}");
                  return BadRequest();
              }
          } 
@@ -48,67 +39,51 @@ namespace Question
         [SwaggerResponse(HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(string id)
         {
-            var result = await _questionRepository.GetQuestionAsync(id);
-            
-            if(result != null)
-            {
-                var response = new ResponseData.Question {
-                        Id = result.Id,
-                        TopicId = result.TopicId,
-                        Description = result.Description,
-                        Notes = result.Notes
-                    };
+            var response = await _quizManager.GetQuestionById(id);
+            if(response != null)
                 return new OkObjectResult(response);
-            }
-            
+
             return NotFound();
         }  
 
         [HttpGet("{topicId}")]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetQuestions(string topicId)
         {
-            try
-            {
-                var results = await _questionRepository.GetQuestionsByTopic(topicId);
-                if(results.Any())
-                {
-                    var response = results.Select( q => new ResponseData.Question {
-                        Id = q.Id,
-                        TopicId = q.TopicId,
-                        Description = q.Description,
-                        Notes = q.Notes
-                    } );
-                    return new OkObjectResult(response);
-                }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"[Error ] : {ex}");
+            if(string.IsNullOrEmpty(topicId))
                 return BadRequest();
-            }
+
+            var response = await _quizManager.GetQuestionByTopicId(topicId);
+            if(response != null)
+                return new OkObjectResult(response);
+
             return NotFound();
         }
 
-        [HttpPost]
-        [SwaggerResponseAttribute(HttpStatusCode.Created)]
-        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.QuestionsIgnoreId question)
+        [HttpPost("{topicId}")]
+        [SwaggerResponse(HttpStatusCode.Created)]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Add(string topicId, 
+                    [FromBodyAttribute]QuestionsIgnoreTopicIdAndQuestionId question)
         {
             try
-            {   var topic = await _topicRepository.GetTopicAsync( question.TopicId );
+            { 
+                var topic = await _quizManager.GetTopicById(topicId);
                 if( topic == null )
                 {
                     return BadRequest("Topic not found");
                 }
 
-                await _questionRepository.AddQuestionAsync( new DataEntity.Question {
-                        TopicId = question.TopicId,
-                        Description = question.Description,
-                        Notes = question.Notes
+                await _quizManager.AddQuestion(new ResponseData.Question {
+                    TopicId = topicId,
+                    Description = question.Description,
+                    Notes = question.Notes
                 });
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine($"[Error ] {ex}");
                 return BadRequest();
             }
             
@@ -121,8 +96,16 @@ namespace Question
             throw new NotImplementedException();
         }
 
+        [HttpPut("{topicId}/question")]
+        public Task<IActionResult> Update(string topicId, 
+            [FromBodyAttribute] QuestionsIgnoreTopicIdAndQuestionId question )
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpPut("{id}")]
-        public Task<IActionResult> Update(string id, [FromBodyAttribute] ResponseData.QuestionsIgnoreId question )
+        public Task<IActionResult> UpdateQuestion(string id, 
+                [FromBodyAttribute] QuestionIgnoreId question)
         {
             throw new NotImplementedException();
         }

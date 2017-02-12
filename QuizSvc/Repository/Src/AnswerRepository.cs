@@ -4,6 +4,7 @@ using DataEntity;
 using System.Linq;
 using QuizDataAccess;
 using QuizCaching;
+using System;
 
 namespace QuizRepository
 {
@@ -12,7 +13,7 @@ namespace QuizRepository
         Task<IEnumerable<Answer>> GetAllAnswer();
         Task<Answer> GetAnswer(string id);
         Task AddAnswer(Answer answer);
-        Task<Answer> GetAnswerByQuestionId(string questiondId);
+        Task<IEnumerable<Answer>> GetAnswerByQuestionId(string questiondId);
         Task Delete(string answerId);
     }
     public class AnswerRepository : IAnswerRepository
@@ -44,10 +45,9 @@ namespace QuizRepository
             });
         }
 
-        public async Task<Answer> GetAnswerByQuestionId(string questiondId)
+        public async Task<IEnumerable<Answer>> GetAnswerByQuestionId(string questiondId)
         {
-            var result  = await _quizDataAccess.GetByIdAsync("questiondId", questiondId);
-            return result.FirstOrDefault();
+            return await _quizDataAccess.GetByFieldNameAsync("QuestionId", questiondId);
         }
 
         public async Task Delete(string answerId)

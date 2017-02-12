@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using MongoDB.Driver.Linq;
 
 namespace QuizDataAccess
 {

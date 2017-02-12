@@ -1,20 +1,20 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using QuizRepository;
 using Swashbuckle.SwaggerGen.Annotations;
+using QuizManager;
+using ResponseData;
 
 namespace Answer
 {
     [Route("api/quiz/answers")]
     public class AnswerController : Controller 
     {
-        private IAnswerRepository _answerRepository;
-        public AnswerController(IAnswerRepository answerRepository)
+        private IQuizManager _quizManager;
+        public AnswerController(IQuizManager quizManager)
         {
-            _answerRepository = answerRepository;
+            _quizManager = quizManager;
         }
 
         /// <summary>
@@ -26,14 +26,7 @@ namespace Answer
         {
             try
             {
-                var results = await _answerRepository.GetAllAnswer();
-                var responseResults = results.Select( a => new ResponseData.Answer {
-                    Id = a.Id,
-                    QuestionId = a.QuestionId,
-                    Description = a.Description,
-                    Notes = a.Notes
-                } );
-
+                var results = await _quizManager.GetAllAnswers();
                 return new OkObjectResult(results);
             }
             catch(Exception ex)
@@ -48,20 +41,18 @@ namespace Answer
         /// </summary>
         /// <param name="id"></param>
         [HttpGet("{id}")]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(string id)
         {
             try
             {
-                var result = await _answerRepository.GetAnswer(id);
+                if(string.IsNullOrEmpty(id))
+                    return BadRequest();
+
+                var result = await _quizManager.GetAnswerById(id);
                 if(result != null)
-                {
-                    return new OkObjectResult(new ResponseData.Answer {
-                        Id = result.Id,
-                        QuestionId = result.QuestionId,
-                        Description = result.Description,
-                        Notes = result.Notes
-                    });
-                }
+                    return new OkObjectResult(result);
             }
             catch(Exception ex)
             {
@@ -69,46 +60,27 @@ namespace Answer
                 return BadRequest();
             }
 
-            return new NotFoundResult();
-        }
-
-        [HttpGet("{questionId}")]
-        public async Task<IActionResult> GetAnswerByQuestionId(string questionId)
-        {
-            try
-            {
-                var resuls = await _answerRepository.GetAnswerByQuestionId(questionId);
-                if(resuls != null)
-                {
-                    return new OkObjectResult( new ResponseData.Answer {
-                        Id = resuls.Id,
-                        QuestionId = resuls.QuestionId,
-                        Description = resuls.Description,
-                        Notes = resuls.Notes
-                    } );
-                }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"[Error ] : {ex}");
-                return BadRequest();
-            }
-
             return NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Add([FromBodyAttribute]ResponseData.AnswerForIgnoreId answer)
+        [HttpPost("{questionId}/answers")]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.Created)]
+        public async Task<IActionResult> Add(string questionId, 
+                        [FromBodyAttribute]AnswerIgnoreIdAndQuestion answer)
         {
-            try
+             try
             {
-               await _answerRepository.AddAnswer( new DataEntity.Answer {
-                   QuestionId = answer.QuestionId,
-                   Description = answer.Description,
-                   Notes = answer.Notes
-               });
+                var question = _quizManager.GetQuestionById(questionId);
+                if( question == null )
+                    return BadRequest("Question Not found");
 
-               return new StatusCodeResult((int)HttpStatusCode.Created);
+                await _quizManager.AddAnswer( new ResponseData.Answer {
+                    QuestionId = answer.QuestionId,
+                    Description = answer.Description,
+                    Notes = answer.Notes
+                } );
+                return new StatusCodeResult((int)HttpStatusCode.Created);
             }
             catch (System.Exception ex)
             {
@@ -117,18 +89,31 @@ namespace Answer
             }
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerResponse(HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Delete( string id)
+        [HttpPut("{questionId}/answer")]
+        public Task<IActionResult> Update(string questionId, 
+            [FromBodyAttribute] AnswerIgnoreIdAndQuestion answer )
         {
-            await _answerRepository.Delete(id);
-            return NotFound();
+            throw new NotImplementedException();
         }
 
         [HttpPut("{id}")]
-        public Task<IActionResult> Update(string id, [FromBodyAttribute] ResponseData.AnswerForIgnoreId answer )
+        public Task<IActionResult> Update(string id, 
+                [FromBodyAttribute] AnswerIgnoreId answer)
         {
             throw new NotImplementedException();
+        }
+
+        [HttpDelete("{id}")]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
+        [SwaggerResponse(HttpStatusCode.NoContent)]
+        public async Task<IActionResult> Delete( string id)
+        {
+            var answer = _quizManager.GetAnswerById(id);
+            if(answer == null)
+                return NotFound("Answer not found");
+
+            await _quizManager.DeleteAnswer(id);
+            return NoContent();
         }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using QuizCaching;
 using QuizRepository;
 using Swashbuckle.Swagger.Model;
+using QuizManager;
 
 namespace QuizSvc
 {
@@ -22,8 +23,7 @@ namespace QuizSvc
             services.AddSwaggerGen ( options =>  options.SingleApiVersion(new Info
                 {
                     Version = "v1",
-                    Title = "Flash Card Web API",
-                    Description = "Build for Quiz and Flash card",
+                    Title = "Flash Card/Quiz Web API",
                     TermsOfService = "Contact ppkumar.email@gmail.com",
             }));
 
@@ -34,12 +34,16 @@ namespace QuizSvc
                 options => options.Configuration = GetRedisContainerIPAddress());
             
             // Data Access Layer
-
             services.AddTransient<IQuizDataAccess<Topic>>(t => new QuizDataAccess<Topic>());
             services.AddTransient<IQuizDataAccess<DataEntity.Question>>(q => new QuizDataAccess<DataEntity.Question>());
             services.AddTransient<IQuizDataAccess<DataEntity.Answer>>( a  => new QuizDataAccess<DataEntity.Answer>());
+            
+            CacheingDI(services);
+            RepositorysDI(services);
+        }
 
-
+        private void CacheingDI(IServiceCollection services)
+        {
             var serviceProvider = services.BuildServiceProvider();
             
             // Topic Cache
@@ -51,9 +55,12 @@ namespace QuizSvc
             // Answer Cache
             services.AddTransient<IQuizCache<DataEntity.Answer>>(
                 ac => new QuizCache<DataEntity.Answer>(serviceProvider.GetService<IDistributedCache>()));
+        }
 
-            serviceProvider = services.BuildServiceProvider(); // TODO - why do i need to call this again ?
-            
+        private void RepositorysDI(IServiceCollection services)
+        {
+            var serviceProvider = services.BuildServiceProvider(); // TODO - why do i need to call this again ?
+
             // Topic Repository
             services.AddTransient<ITopicRepository>( tr =>
                new TopicRepository(
@@ -71,6 +78,20 @@ namespace QuizSvc
                 ar => new AnswerRepository(
                     serviceProvider.GetService<IQuizDataAccess<DataEntity.Answer>>(),
                     serviceProvider.GetService<IQuizCache<DataEntity.Answer>>()));
+
+            // QuizManager
+            var topicRepoInstance = new TopicRepository(
+                       serviceProvider.GetService<IQuizDataAccess<Topic>>(),
+                       serviceProvider.GetService<IQuizCache<Topic>>());
+            var questionRepoInstance = new QuestionRepository(
+                    serviceProvider.GetService<IQuizDataAccess<DataEntity.Question>>(),
+                    serviceProvider.GetService<IQuizCache<DataEntity.Question>>());
+            var answerRepoInstance = new AnswerRepository(
+                    serviceProvider.GetService<IQuizDataAccess<DataEntity.Answer>>(),
+                    serviceProvider.GetService<IQuizCache<DataEntity.Answer>>());
+
+            services.AddTransient<IQuizManager>( 
+                qm => new QuizManager.QuizManager( topicRepoInstance, questionRepoInstance,  answerRepoInstance));
         }
 
         private string GetRedisContainerIPAddress()

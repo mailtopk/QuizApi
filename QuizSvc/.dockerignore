@@ -1,0 +1,4 @@
+*.lock.json
+*.md
+*.yml
+*.Dockerfile

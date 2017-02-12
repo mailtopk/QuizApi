@@ -10,7 +10,7 @@ namespace ResponseData
         public virtual string Id {get; set;}
         [JsonProperty("questionId")]
         [RequiredAttribute]
-        public string QuestionId {get; set;}
+        public virtual string QuestionId {get; set;}
         [JsonProperty("description")]
         [RequiredAttribute]
         public string Description{get; set;}
@@ -18,9 +18,15 @@ namespace ResponseData
         public string Notes{get; set;}
     }
 
-    public class AnswerForIgnoreId : Answer
+    public class AnswerIgnoreId : Answer
     {
         [JsonIgnoreAttribute]
         public override string Id { get; set; }
+    }
+
+    public class AnswerIgnoreIdAndQuestion : AnswerIgnoreId
+    {
+        [JsonIgnoreAttribute]
+        public override string QuestionId { get; set; }
     }
 }

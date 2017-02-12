@@ -1,42 +1,32 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
 using System.Net;
-using QuizRepository;
+using QuizManager;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace TopicController
 {
     [RouteAttribute("api/quiz/topics")]
     public class TopicController : Controller
     {
-        private readonly ITopicRepository _topicRepository;
-        public TopicController(ITopicRepository topicRepository)
+        private readonly IQuizManager _quizManager;
+        private readonly ILogger _loggerTopic;
+        public TopicController(IQuizManager quizManager, ILogger<TopicController> logger)
         {
-            _topicRepository = topicRepository;
+            _quizManager = quizManager;
+            _loggerTopic = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var results = await _topicRepository.GetAllTopicsAsync();
+            var results= await _quizManager.GetAllTopics();
+            if(results != null)
+                return new OkObjectResult(results);
 
-                var response = results.Select ( t => new ResponseData.Topic  {
-                    Id = t.Id,
-                    Description = t.Description,
-                    Notes = t.Notes
-                }).ToList();
-
-                return new ObjectResult(response);
-            }
-            catch (System.Exception e)
-            {
-                System.Console.WriteLine(e.Message);
-                return BadRequest();
-            }
+            return new OkResult();
         }
 
         [HttpGet("{id}")]
@@ -45,44 +35,32 @@ namespace TopicController
         public async Task<IActionResult> GetById(string id)
         {
             if(string.IsNullOrEmpty (id))
-            {
                 return BadRequest();
-            }
             
             try
             {
-                var topicAwaiter =  await _topicRepository.GetTopicAsync(id);
-                
-                if(topicAwaiter == null)
-                {
-                    return NoContent();
-                }
-
-                var result = new ResponseData.Topic {
-                    Id = topicAwaiter.Id,
-                    Description = topicAwaiter.Description,
-                    Notes = topicAwaiter.Notes
-                };
-
-                return new ObjectResult(result);
+                var results =  await _quizManager.GetTopicById(id);
+                return new ObjectResult(results);
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine(ex);
+                _loggerTopic.LogCritical($"GetById{ex}");
                 return BadRequest();
             }
         }
 
         [HttpPut("{id}")]
-        public Task<IActionResult> Update(string id, [FromBodyAttribute] ResponseData.TopicIgnoreUniqId topic )
+        public Task<IActionResult> Update(string id, 
+                [FromBodyAttribute] ResponseData.TopicIgnoreUniqId topic )
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete("{id}")]
-        public Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            throw new NotImplementedException();
+            await _quizManager.DeleteTopic(id);
+            return NoContent();
         }
 
         [HttpPost]
@@ -92,31 +70,16 @@ namespace TopicController
         {
             try
             {
-                await _topicRepository.AddTopicAsync(new DataEntity.Topic {
-                    Description = topic.Description,
-                    Notes = topic.Notes
-                });
+                await _quizManager.AddTopic(topic);
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _loggerTopic.LogCritical($"AddTopic{ex}");
                 return BadRequest();
             }
             
            // Response.Headers.Add("Location", ""); // TODO send new objectid 
             return new StatusCodeResult((int)HttpStatusCode.Created);
-        }
-
-        [HttpGet("{topicId}/questions")]
-        public Task<IActionResult> GetAllQuestions(string topicId)
-        {
-            throw new NotImplementedException();
-        }
-
-        [HttpGet("{topicId}/{questionId}/answer")]
-        public Task<IActionResult> GetAnswer(string topicId, string question)
-        {
-            throw new NotImplementedException();
         }
 
     }

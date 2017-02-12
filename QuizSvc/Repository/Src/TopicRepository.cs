@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DataEntity;
 using QuizDataAccess;
 using QuizCaching;
+using System;
 
 namespace QuizRepository
 {
@@ -13,6 +14,7 @@ namespace QuizRepository
         Task<IEnumerable<Topic>> GetAllTopicsAsync();
         Task<Topic> GetTopicAsync(string id);
         Task AddTopicAsync(Topic topic);
+        Task Delete(string id);
     }
     public class TopicRepository : ITopicRepository
     {
@@ -32,11 +34,18 @@ namespace QuizRepository
 
         public async Task<Topic> GetTopicAsync(string id)
         {
-            return await _quizCache.GetValueFromKeyAsync(id, async (key) => 
-                { 
-                    var result = await _quizDataAccess.GetByIdAsync("_id", key);
-                    return result.FirstOrDefault();
-                } );
+            try
+            {
+                return await _quizCache.GetValueFromKeyAsync(id, async (key) => 
+                    { 
+                        var result = await _quizDataAccess.GetByIdAsync("_id", key);
+                        return result.FirstOrDefault();
+                    } );
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
 
         public async Task AddTopicAsync(Topic topic)
@@ -50,6 +59,18 @@ namespace QuizRepository
                 // {
                 //     await _quizCache.SaveToCacheAsync(newTopicId, topic);
                 // }
+            }
+        }
+
+        public async Task Delete(string id)
+        {
+            try
+            {
+                await _quizDataAccess.Delete(id);
+            }
+            catch(Exception)
+            {
+                throw;
             }
         }
     }
