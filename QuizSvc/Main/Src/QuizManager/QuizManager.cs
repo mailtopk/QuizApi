@@ -51,7 +51,8 @@ namespace QuizManager
             return results.Select( a => new ResponseData.Answer {
                 Id = a.Id,
                 QuestionId = a.QuestionId,
-                Description = a.Description
+                Description = a.Description,
+                Notes = a.Notes
             } );
         }
 
@@ -110,6 +111,7 @@ namespace QuizManager
             var result = await _answerRepository.GetAnswer(id);
             return new ResponseData.Answer {
                 Id = result.Id,
+                QuestionId = result.QuestionId,
                 Description = result.Description,
                 Notes = result.Notes
             };

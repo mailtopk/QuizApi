@@ -76,7 +76,7 @@ namespace Answer
                     return BadRequest("Question Not found");
 
                 await _quizManager.AddAnswer( new ResponseData.Answer {
-                    QuestionId = answer.QuestionId,
+                    QuestionId = questionId,
                     Description = answer.Description,
                     Notes = answer.Notes
                 } );
