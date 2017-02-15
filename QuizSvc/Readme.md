@@ -1,94 +1,21 @@
 # Project Details
-Web api's project is to help students, make there own Quiz.
-It has three part
-   1. Topic - Topic/Chapers are root objects.
-   2. Question - Questions fall into one bucket of topic
-   3. Answers - Answers to the questions. 
+This is a RESTful web service to build Quiz/Flashcard .
 
-*Note*: This project is initial prototype 
-
-*   Directory strcture
-```
-/QuizSvc
-  |
-  |__/Main
-  |    |_/Src
-  |    |    |_/Controllers
-  |    |    |_/QuizManager
-  |    |    |_/ResponseData
-  |    |_/project.json
-  |
-  |__/Repository
-  |     |_/src
-  |     |    |__/TopicRepository
-  |     |    |__/QuestionsRepository
-  |     |    |_/AnswerRepository
-  |     |_/project.json
-  |
-  |__/DatabaseAccess
-  |     |_/Src
-  |     |_/project.json
-  |
-  |__/Cache
-  |   |_/Src
-  |   |_/project.json
-  |
-  |__/Test
-  |     |_/ClassLevel
-  |     |__/project.json
-  |
-  |__/global.json
-  |__/Dockerfile
-  |__/docker-compose.yml
-  |__/Readme.md
-
-```
-* Required Software 
-    - [Docker](https://www.docker.com/)
-
-# Docker Environment
-Docker yml build three images, Quiz API web service, mongodb and redis cacheing.
-
-### Build docker images (web service, mongodb and redis)
-```
-    $ docker-compose build
-```
-
-### Build step can be skiped and directly run docker images
-```
-    $ docker-compose up -d
-```
-At this point docker container's should be up and running.
-
-### Get list of running container
-```
-    $ docker ps --format "table {{.ID}} \t{{.Image}} \t{{.Names}} \t{{.Ports}}"
-``` 
-
-### Run API explorer
-Get list of all the enpoint, below api explorer
-```
-    http://localhost:8080/swagger/ui/index.html
-```
-
-At this point quiz web service is ready to use.
-
-
-## Debuging
-
-* Docker force create images
-```
-    docker-compose build --force-rm --no-cache
-    docker-compose up --force-recreate
-```
-* Get container info
+## Debuging under Docker environment 
+* Get container info if runing
 ``` 
     $ docker inspect <containerId>
 ``` 
-* Mongodb 
+## Mongodb 
 Log on to mongodb containers
-
-List dbs
+```
+    $ docker exec -it <containerId> bash
+```
+Launch mongo client
+```
+    $ mongo
+```
+From mongo console List all dbs
 ```
     > show dbs
 ```
@@ -103,8 +30,15 @@ List all the documents in collections
     > get.<collectionname>.find()
 ```
 
-
-* Redis Cache
+## Redis Cache
+Run redis container
+```
+    $ docker exec -it <containerId> bash
+```
+Run redis client
+```
+    $ redis-cli
+```
 List all the key
 ```
     > key *
@@ -124,7 +58,7 @@ Show all the values in a give key
     docker rmi -f $(docker images)
 ```
 
-# Build and run docker images (web service and mongodb) separately 
+## Build and run docker images (web service and mongodb) separately 
 
 Build Quiz web service image
 ```
@@ -136,13 +70,7 @@ Run image
     $ docker run -d -p 8080:5000 -t quizserver:QuizWebApiServer
 ```
 
-## Mongo DB
-* Attach to mongo process
-```
-    $ docker exec -it <containerId> bash
-```
-
-# Building Project using dotnet 
+## Building Project using dotnet 
 This will help in debuging application on local machine
 
 * Required Software
@@ -151,31 +79,17 @@ This will help in debuging application on local machine
 ### Restore 
 
 ```
-    $ cd - ../QuizSvc/Main
+    $ cd to ../QuizSvc/Main
     $ dotnet restore
 ```
 
 ### Build 
 ```
-    cd - QuizSvc/Main
     $ dotnet build
 ```
 ### Run
 ```
     $ dotnet run
-```
-## References 
-### To Create simple dotnet console
-```
-    $ dotnet new 
-```
-### Build lib
-```
-    $ dotnet new -t lib
-```
-### To create a *test* project
-```
-     $ dotnet new -t xunittest
 ```
 ###   Run test
 ```
