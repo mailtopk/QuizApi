@@ -18,7 +18,6 @@ namespace QuizSvcTest
     public class QuestionControllerTests
     {
         private Mock<IQuizDataAccess<DataEntity.Question>> _questionDataAccessMock;
-        private Mock<ITopicRepository> _topicDataAccessMock;
         private QuestionController _questionControllerMock;
         private Mock<IQuizCache<DataEntity.Question>> _questionsCacheMock;
         private Mock<IDistributedCache> _redisServerMock;
@@ -31,7 +30,7 @@ namespace QuizSvcTest
         {
              _questionDataAccessMock = new Mock<IQuizDataAccess<DataEntity.Question>>();
              _questionsCacheMock = new Mock<IQuizCache<DataEntity.Question>>();
-             _topicDataAccessMock = new Mock<ITopicRepository>();
+            //  _topicDataAccessMock = new Mock<ITopicRepository>();
              _topicRepositoryMock = new Mock<ITopicRepository>();
              _questionRepositoryMock = new Mock<IQuestionRepository>();
              _answerRepository = new Mock<IAnswerRepository>();
@@ -63,9 +62,6 @@ namespace QuizSvcTest
         public async void CanGetBadResponseWhenUnavilableTopicIdIsPassedWhileAddQuestion()
         {
             var mockResults = new DataEntity.Question();
-
-            _topicDataAccessMock.Setup( t => t.GetTopicAsync( It.IsAny<string>() ))
-                                .ReturnsAsync(null);
 
             _questionDataAccessMock.Setup( p => p.AddAsync(mockResults) )
                         .ReturnsAsync(string.Empty)

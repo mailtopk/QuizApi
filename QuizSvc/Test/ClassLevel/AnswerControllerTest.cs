@@ -17,7 +17,6 @@ namespace QuizSvcTest
     {
         private Mock<IQuizDataAccess<DataEntity.Answer>> _dataAccessMock;
         private AnswerController _answerController;
-        private Mock<IQuizCache<DataEntity.Answer>> _answerCacheMock;
         private IQuizManager _quizManager;
          private Mock<ITopicRepository> _topicRepositoryMock;
         private Mock<IQuestionRepository> _questionRepositoryMock;
@@ -26,8 +25,6 @@ namespace QuizSvcTest
         public AnswerControllerTests()
         {
             _dataAccessMock = new Mock<IQuizDataAccess<DataEntity.Answer>>();
-            _answerCacheMock = new Mock<IQuizCache<DataEntity.Answer>>();
-
              _topicRepositoryMock = new Mock<ITopicRepository>();
              _questionRepositoryMock = new Mock<IQuestionRepository>();
              _answerRepository = new Mock<IAnswerRepository>();
@@ -52,12 +49,6 @@ namespace QuizSvcTest
                 Description = "answer description",
                 Notes = "mynotes"
             }};
-
-            _answerCacheMock.Setup( ac => 
-                        ac.GetValueFromKeyAsync(
-                            It.IsAny<string>(), 
-                            It.IsAny<Func<string, Task<DataEntity.Answer>>>()))
-                        .ReturnsAsync(null);
 
             _questionRepositoryMock.Setup( qr => qr.GetQuestionAsync(It.IsAny<string>()))
                         .ReturnsAsync(new DataEntity.Question());
