@@ -1,14 +1,11 @@
 using Xunit;
-using System.Threading.Tasks;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using QuizDataAccess;
 using System.Net;
-using QuizCaching;
 using Answer;
 using QuizRepository;
 using QuizManager;
-using System;
 using System.Collections.Generic;
 
 namespace QuizSvcTest

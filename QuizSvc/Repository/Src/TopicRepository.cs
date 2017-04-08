@@ -14,6 +14,7 @@ namespace QuizRepository
         Task<IEnumerable<Topic>> GetAllTopicsAsync();
         Task<Topic> GetTopicAsync(string id);
         Task AddTopicAsync(Topic topic);
+        Task<long> UpdateDescription(string topicId, string description);
         Task Delete(string id);
     }
     public class TopicRepository : ITopicRepository
@@ -62,6 +63,12 @@ namespace QuizRepository
             }
         }
 
+        public async Task<long> UpdateDescription(string topicId, string description)
+        {
+            Console.WriteLine("in repository");
+            return await _quizDataAccess.Update<Topic>( 
+                topicId, () => new Topic { Description = description});
+        }
         public async Task Delete(string id)
         {
             try

@@ -11,6 +11,7 @@
     "DatabaseAccess" : "1.0.0-*",
     "Cache": "1.0.0-*",
     "Main": "1.0.0-*",
+    "Helper": "1.0.0-*",
     "System.Runtime.Serialization.Primitives": "4.3.0",
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc2-build10015",

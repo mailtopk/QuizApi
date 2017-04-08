@@ -25,8 +25,15 @@ namespace QuizManager
         Task<string> AddQuestion(ResponseData.Question question);
         Task<IEnumerable<ResponseData.Answer>> GetAnswersByQuestionId(string questionId);
         Task<string> AddAnswer(ResponseData.Answer answer);
+        
+        
+        // Update
+
+        Task<long> UpdateTopicDescription(string topicId, string topicDescription);
+        
         Task DeleteAnswer(string id);
         Task DeleteTopic(string id);
+
     }
 
     public class QuizManager : IQuizManager
@@ -198,6 +205,11 @@ namespace QuizManager
             }
 
             return null;
+        }
+
+        public async Task<long> UpdateTopicDescription(string topicId, string topicDescription)
+        {
+            return await _topicRepository.UpdateDescription(topicId, topicDescription);
         }
 
         public async Task DeleteTopic(string id)
