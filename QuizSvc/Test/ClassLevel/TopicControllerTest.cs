@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using QuizDataAccess;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 using QuizCaching;
 using System;
 using QuizManager;
 using QuizRepository;
 using Microsoft.Extensions.Logging;
+using FluentAssertions;
+using MongoDB.Driver;
+using System.Threading;
 
 namespace QuizSvcTest
 {
@@ -24,6 +28,12 @@ namespace QuizSvcTest
         private  Mock<ITopicRepository> _topicRepository;
         private Mock<IQuestionRepository> _quizRepository;
         private Mock<IAnswerRepository> _answerRepository;
+
+        // MongoDB
+        private Mock<IMongoDatabase> _mockMongoDatabase;
+        private Mock<IAsyncCursor<DataEntity.Topic>>  _mockMongoDBCursor;
+        private Mock<MongoDB.Driver.IMongoCollection<DataEntity.Topic>> _mockMongoDBCollection;
+
         public TopicControllerTests()
         {
              _dataAccessMock = new Mock<IQuizDataAccess<DataEntity.Topic>>();
@@ -32,6 +42,12 @@ namespace QuizSvcTest
              _quizRepository = new Mock<IQuestionRepository>();
              _answerRepository = new Mock<IAnswerRepository>();
              _loggerMock = new Mock<ILogger<TopicController.TopicController>>();
+
+
+             // Mongo DB 
+             _mockMongoDatabase = new Mock<IMongoDatabase>();
+             _mockMongoDBCursor = new Mock<IAsyncCursor<DataEntity.Topic>>();
+             _mockMongoDBCollection = new Mock<MongoDB.Driver.IMongoCollection<DataEntity.Topic>>();
 
             _quizManager = new QuizManager.QuizManager(
                     _topicRepository.Object, _quizRepository.Object, _answerRepository.Object);
@@ -107,7 +123,54 @@ namespace QuizSvcTest
                         .Verifiable();
             var result = await _topicControllerMock.AddTopic(new ResponseData.TopicIgnoreUniqId());
             var actualResult = Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal((int)HttpStatusCode.Created, actualResult.StatusCode);
+            actualResult.StatusCode.Should().Be((int)HttpStatusCode.Created, "Status code should be created");
+        }
+
+        [Fact]
+        public async void CanUpdateTopic()
+        {
+            _dataAccessMock.Setup( dal => dal.Update<DataEntity.Topic>(
+                    It.IsAny<string>(), It.IsAny<Expression<Func<DataEntity.Topic>>>()))
+                .ReturnsAsync(new DataEntity.Topic())
+                .Verifiable();
+            
+            var topicRep = new TopicRepository(_dataAccessMock.Object, null);
+            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
+            
+            var result = await topicController.Update("mockId", "mockUpdatedDescription");
+            
+            var statusCode = Assert.IsType<StatusCodeResult>(result);
+            statusCode.StatusCode.Should().Be(204, "Should return status code as modified");
+        }
+
+        [Fact]
+        public async void UpdateCanHandleUnavilableResource()
+        {
+            // Arrange
+            DataEntity.Topic returnVal = null;
+            _mockMongoDBCollection.Setup( c =>  
+                 c.FindOneAndUpdateAsync<DataEntity.Topic>(
+                        It.IsAny<MongoDB.Driver.FilterDefinition<DataEntity.Topic>>(),
+                        It.IsAny<MongoDB.Driver.UpdateDefinition<DataEntity.Topic>>(), 
+                        It.IsAny<FindOneAndUpdateOptions<DataEntity.Topic, DataEntity.Topic>>(),
+                        It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(returnVal);
+
+
+            _mockMongoDatabase.Setup( mdb => 
+                    mdb.GetCollection<DataEntity.Topic>(It.IsAny<string>(), 
+                                        It.IsAny<MongoCollectionSettings>())).Returns(_mockMongoDBCollection.Object);
+            
+            var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(_mockMongoDatabase.Object);
+            var topicRep = new TopicRepository(dataAccess, null);
+            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
+            
+            // Act
+            var result = await topicController.Update("58e5db28e40cc200151a5ba4", "mockUpdatedDescription");
+            
+            // Assert
+            var statusCode = Assert.IsType<StatusCodeResult>(result);
+            statusCode.StatusCode.Should().Be(304, "Should return status code as modified");
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using QuizRepository;
 using System;
 using System.Collections.Generic;
-using ResponseData;
 
 namespace QuizManager
 {
@@ -25,8 +24,15 @@ namespace QuizManager
         Task<string> AddQuestion(ResponseData.Question question);
         Task<IEnumerable<ResponseData.Answer>> GetAnswersByQuestionId(string questionId);
         Task<string> AddAnswer(ResponseData.Answer answer);
+        
+        
+        // Update
+
+        Task<ResponseData.Topic> UpdateTopicDescription(string topicId, string topicDescription);
+        
         Task DeleteAnswer(string id);
         Task DeleteTopic(string id);
+
     }
 
     public class QuizManager : IQuizManager
@@ -195,6 +201,21 @@ namespace QuizManager
                     Description = a.Description,
                     Notes = a.Notes
                 });
+            }
+
+            return null;
+        }
+
+        public async Task<ResponseData.Topic> UpdateTopicDescription(string topicId, string topicDescription)
+        {
+            var updatedEntity = await _topicRepository.UpdateDescription(topicId, topicDescription);
+            if( updatedEntity != null )
+            {
+                return new ResponseData.Topic {
+                    Id = updatedEntity.Id,
+                    Description = updatedEntity.Description,
+                    Notes = updatedEntity.Notes
+                };
             }
 
             return null;

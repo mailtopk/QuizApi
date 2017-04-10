@@ -49,16 +49,30 @@ namespace TopicController
             }
         }
 
-        [HttpPut("{id}")]
-        public Task<IActionResult> Update(string id, 
-                [FromBodyAttribute] ResponseData.TopicIgnoreUniqId topic )
+        [HttpPut("{id}/{description}")]
+        [SwaggerResponse(HttpStatusCode.NotModified)]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.NoContent)]
+        public async Task<IActionResult> Update(string id, string description )
         {
-            throw new NotImplementedException();
+            if(string.IsNullOrEmpty(id) || string.IsNullOrEmpty(description))
+                return BadRequest();
+
+            var response = await _quizManager.UpdateTopicDescription(id, description);
+            if(response != null)
+                return new StatusCodeResult((int)HttpStatusCode.NoContent);
+
+            return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
 
         [HttpDelete("{id}")]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.NoContent)]
         public async Task<IActionResult> Delete(string id)
         {
+            if(string.IsNullOrEmpty(id))
+                return BadRequest();
+
             await _quizManager.DeleteTopic(id);
             return NoContent();
         }

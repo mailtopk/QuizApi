@@ -2,6 +2,9 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using System.Linq.Expressions;
+using System;
+using QuizHealper;
 
 namespace QuizDataAccess
 {
@@ -12,9 +15,9 @@ namespace QuizDataAccess
         private IMongoDatabase _mongoDatabase;
         private IMongoCollection<T> _collectionOfT;
 
-        public QuizDataAccess()
+        public QuizDataAccess(IMongoDatabase mongoClient = null)
         {
-            _mongoDatabase = new MongoClient(
+            _mongoDatabase = mongoClient ?? new MongoClient(
                         MongoUrl.Create($"{_dbUri}{_dbName}"))
                             .GetDatabase(_dbName);
                             
@@ -48,9 +51,7 @@ namespace QuizDataAccess
         // TODO combine GetByIdAsync
         public async Task<IEnumerable<T>> GetByFieldNameAsync(string fieldName, string searchString )
         {
-            System.Console.WriteLine($"Field Name : {fieldName} Search String{searchString}");
             var filter = Builders<T>.Filter.Eq(fieldName, searchString);
-
             var cursor = await _collectionOfT.FindAsync<T>(filter);
 
             return await Task.Run( async () => {
@@ -69,6 +70,47 @@ namespace QuizDataAccess
             return results;
         }
 
+        public async Task<T> Update<TUpdate>(string documentId, 
+                                        Expression<Func<TUpdate>> entityToUpdate)
+        {
+            var updateBuilders = new List<UpdateDefinition<T>>();
+            var memberBindingsAndValue = Healper.ExtractBindingsAndValues(entityToUpdate);
+            if( memberBindingsAndValue == null)
+                throw new Exception("Invalid expression");
+
+            foreach (var item in memberBindingsAndValue)
+            {
+                var binding = item.Key;
+                var value = item.Value;
+
+                if(binding == null || value == null)
+                    throw new Exception("invalid binding and value");
+
+                var set = MongoDB.Driver.Builders<T>.Update.Set(binding, value);
+                updateBuilders.Add(set);
+            }
+
+            try
+            {
+                if(updateBuilders.Count == 0)
+                    return null;
+
+                var filterDef = Builders<T>.Filter.Eq("_id", ObjectId.Parse(documentId));
+                var combineUpdateBuilder = MongoDB.Driver.Builders<T>.Update.Combine(updateBuilders);
+                var options = new FindOneAndUpdateOptions<T>
+                    {
+                        ReturnDocument = ReturnDocument.After
+                    };
+
+                return  await _collectionOfT.FindOneAndUpdateAsync<T>(filterDef, combineUpdateBuilder, options);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw ex;
+            }
+        }
+         
         public async Task Delete(string id)
         {
             var filter = Builders<T>.Filter.Eq("_id", ObjectId.Parse(id));
