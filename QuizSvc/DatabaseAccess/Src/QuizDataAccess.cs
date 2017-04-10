@@ -11,8 +11,7 @@ namespace QuizDataAccess
     public class QuizDataAccess<T> : IQuizDataAccess<T> where T : class
     {
         private const string _dbName = "QuizDB";
-        //private const string _dbUri = "mongodb://backenddb:27017/";
-        private const string _dbUri = "mongodb://localhost:27017/";
+        private const string _dbUri = "mongodb://backenddb:27017/";
         private IMongoDatabase _mongoDatabase;
         private IMongoCollection<T> _collectionOfT;
 
@@ -71,13 +70,9 @@ namespace QuizDataAccess
             return results;
         }
 
-        public async Task<long> Update<TUpdate>(string documentId, 
+        public async Task<T> Update<TUpdate>(string documentId, 
                                         Expression<Func<TUpdate>> entityToUpdate)
         {
-            var filterDef = Builders<T>.Filter.Eq("_id", ObjectId.Parse(documentId));
-            if(filterDef == null)
-                    return 0;
-            
             var updateBuilders = new List<UpdateDefinition<T>>();
             var memberBindingsAndValue = Healper.ExtractBindingsAndValues(entityToUpdate);
             if( memberBindingsAndValue == null)
@@ -98,12 +93,16 @@ namespace QuizDataAccess
             try
             {
                 if(updateBuilders.Count == 0)
-                    return 0;
+                    return null;
 
+                var filterDef = Builders<T>.Filter.Eq("_id", ObjectId.Parse(documentId));
                 var combineUpdateBuilder = MongoDB.Driver.Builders<T>.Update.Combine(updateBuilders);
-                var result = await _collectionOfT.UpdateOneAsync(filterDef, combineUpdateBuilder );
+                var options = new FindOneAndUpdateOptions<T>
+                    {
+                        ReturnDocument = ReturnDocument.After
+                    };
 
-                return result.ModifiedCount;
+                return  await _collectionOfT.FindOneAndUpdateAsync<T>(filterDef, combineUpdateBuilder, options);
             }
             catch(Exception ex)
             {

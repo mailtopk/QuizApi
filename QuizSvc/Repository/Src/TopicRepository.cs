@@ -14,7 +14,7 @@ namespace QuizRepository
         Task<IEnumerable<Topic>> GetAllTopicsAsync();
         Task<Topic> GetTopicAsync(string id);
         Task AddTopicAsync(Topic topic);
-        Task<long> UpdateDescription(string topicId, string description);
+        Task<Topic> UpdateDescription(string id, string description);
         Task Delete(string id);
     }
     public class TopicRepository : ITopicRepository
@@ -49,11 +49,11 @@ namespace QuizRepository
             }
         }
 
-        public async Task AddTopicAsync(Topic topic)
+        public async Task AddTopicAsync(Topic id)
         {
-            if (topic != null)
+            if (id != null)
             {
-                var newTopicId = await _quizDataAccess.AddAsync(topic);
+                var newTopicId = await _quizDataAccess.AddAsync(id);
 
                 // TODO - fix this 
                 // if (!string.IsNullOrEmpty(newTopicId))
@@ -63,17 +63,17 @@ namespace QuizRepository
             }
         }
 
-        public async Task<long> UpdateDescription(string topicId, string description)
+        public async Task<Topic> UpdateDescription(string id, string description)
         {
-            Console.WriteLine("in repository");
             return await _quizDataAccess.Update<Topic>( 
-                topicId, () => new Topic { Description = description});
+                id, () => new Topic { Description = description});
         }
         public async Task Delete(string id)
         {
             try
             {
-                await _quizDataAccess.Delete(id);
+                await _quizCache.DeletFromCacheAsync(id, 
+                    async () => await _quizDataAccess.Delete(id) );
             }
             catch(Exception)
             {

@@ -59,7 +59,7 @@ namespace TopicController
                 return BadRequest();
 
             var response = await _quizManager.UpdateTopicDescription(id, description);
-            if(response > 0)
+            if(response != null)
                 return new StatusCodeResult((int)HttpStatusCode.NoContent);
 
             return new StatusCodeResult((int)HttpStatusCode.NotModified);

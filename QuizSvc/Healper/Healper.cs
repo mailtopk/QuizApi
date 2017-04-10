@@ -11,7 +11,7 @@ namespace QuizHealper
         {
             if( expression == null || expression.Body == null)
                 throw new ArgumentException("Invalid Expression");
-                
+
             var resultOfBindingAndValue = new Dictionary<string, Object>();
              // Member init expression
             var memberInitExp = expression.Body as MemberInitExpression;
@@ -35,8 +35,10 @@ namespace QuizHealper
         }
         public static object ExtractConstants(MemberExpression memberExpression)
         {
+            if(memberExpression == null)
+                return null;
+                
             var constExpression = (ConstantExpression)memberExpression.Expression;
-
             if (constExpression != null)
             {
                 var declaringType = constExpression.Type;

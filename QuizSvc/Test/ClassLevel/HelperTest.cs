@@ -36,5 +36,13 @@ namespace HelperTest
             var ex = Assert.Throws<ArgumentException>( () => Healper.ExtractBindingsAndValues(nullInput));
             Assert.Equal( "Invalid Expression", ex.Message );
         }
+
+        [Fact]
+        public void CanReturnEmptywhenNullInitExpressionIsPassed()
+        {
+            Expression<Func<DataEntity.Topic>> nullInput = () => null;
+            var actualResult =  Healper.ExtractBindingsAndValues(nullInput);
+            Assert.True(actualResult.Count == 0);
+        }
     }
 }
