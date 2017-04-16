@@ -11,6 +11,8 @@ using QuizCaching;
 using QuizRepository;
 using Swashbuckle.Swagger.Model;
 using QuizManager;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace QuizSvc
 {
@@ -20,12 +22,19 @@ namespace QuizSvc
         {
 
             services.AddMvc(options => options.RespectBrowserAcceptHeader = true);
+
+            
             services.AddSwaggerGen ( options =>  options.SingleApiVersion(new Info
                 {
                     Version = "v1",
                     Title = "Flash Card/Quiz Web API",
                     TermsOfService = "Contact ppkumar.email@gmail.com",
-            }));
+
+                }));
+            var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+            var xmlFile = Path.Combine(basePath, "Main.xml");
+            services.ConfigureSwaggerGen( swaggerConfig => swaggerConfig.IncludeXmlComments(xmlFile));
+
 
             // Redis
             // Redis can not use host name - this is workaround

@@ -8,6 +8,11 @@ It has three part
 
 *Note*: This project is initial prototype 
 
+
+## Topics
+![ScreenShot](/QuizSvc/Images/topics.png)
+
+
 *   Directory strcture
 ```
 /QuizSvc
@@ -89,6 +94,9 @@ At this point quiz web service is ready to use.
     $ docker-compose down
 ```
 
-## Delete all docker images
-```
-```
+### To do
+- [ x ] Support to update Topic
+- [  ] Support to update Question
+- [  ] Support to update Answer
+- [  ] Build UI
+- [ x ] Add Swagger documentation

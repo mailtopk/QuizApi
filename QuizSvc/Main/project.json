@@ -2,7 +2,11 @@
   "version": "1.0.0-*",
   "buildOptions": {
     "debugType": "portable",
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "xmlDoc": true,
+    "nowarn": [
+      "1591"
+    ]
   },
   "dependencies": {
     "Repository" : "1.0.0-*",

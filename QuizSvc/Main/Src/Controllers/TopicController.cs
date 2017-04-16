@@ -19,6 +19,9 @@ namespace TopicController
             _loggerTopic = logger;
         }
 
+        /// <summary>
+        /// Get all Topics
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -29,6 +32,9 @@ namespace TopicController
             return new OkResult();
         }
 
+        /// <summary>
+        /// Get Topic by topic uniqe id
+        /// </summary>
         [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.OK)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -49,6 +55,9 @@ namespace TopicController
             }
         }
 
+        /// <summary>
+        /// Update existing Topic
+        /// </summary>
         [HttpPut("{id}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
@@ -70,6 +79,9 @@ namespace TopicController
             return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
 
+        /// <summary>
+        /// Update Description of an existing Topic
+        /// </summary>
         [HttpPatch("{id}/{description}")]
         [SwaggerResponse(HttpStatusCode.NotModified)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -86,6 +98,9 @@ namespace TopicController
             return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
 
+        /// <summary>
+        /// Delete an existing Topic
+        /// </summary>
         [HttpDelete("{id}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NoContent)]
@@ -98,6 +113,9 @@ namespace TopicController
             return NoContent();
         }
 
+        /// <summary>
+        /// Create new Topic
+        /// </summary>
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
         [SwaggerResponseAttribute(HttpStatusCode.BadRequest)]
