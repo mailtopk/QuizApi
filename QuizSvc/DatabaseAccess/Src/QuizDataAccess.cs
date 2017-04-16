@@ -4,7 +4,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Linq.Expressions;
 using System;
-using QuizHealper;
+using QuizHelper;
 
 namespace QuizDataAccess
 {
@@ -74,16 +74,17 @@ namespace QuizDataAccess
                                         Expression<Func<TUpdate>> entityToUpdate)
         {
             var updateBuilders = new List<UpdateDefinition<T>>();
-            var memberBindingsAndValue = Healper.ExtractBindingsAndValues(entityToUpdate);
+            var memberBindingsAndValue = Helper.ExtractBindingsAndValues(entityToUpdate);
+            
             if( memberBindingsAndValue == null)
                 throw new Exception("Invalid expression");
-
+                
             foreach (var item in memberBindingsAndValue)
             {
+
                 var binding = item.Key;
                 var value = item.Value;
-
-                if(binding == null || value == null)
+                if(binding == null)
                     throw new Exception("invalid binding and value");
 
                 var set = MongoDB.Driver.Builders<T>.Update.Set(binding, value);

@@ -30,9 +30,12 @@ It has three part
   |     |_/Src
   |     |_/project.json
   |
+  |__/Helper
+  |     |_/project.json
+  |
   |__/Cache
-  |   |_/Src
-  |   |_/project.json
+  |     |_/Src
+  |     |_/project.json
   |
   |__/Test
   |     |_/ClassLevel
@@ -80,3 +83,12 @@ Get list of all the enpoint, below api explorer
 ```
 
 At this point quiz web service is ready to use.
+
+### Cleanup docker stop and remove containers, networks
+```
+    $ docker-compose down
+```
+
+## Delete all docker images
+```
+```

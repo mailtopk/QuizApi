@@ -3,10 +3,7 @@
   "buildOptions": {
     "debugType": "portable"
   },
-  "dependencies": {
-     "mongocsharpdriver":"2.4.1",
-     "Helper": "1.0.0-*"
-  },
+  "dependencies": {},
   "frameworks": {
     "netstandard1.6": {
       "dependencies": {

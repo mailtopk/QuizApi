@@ -29,7 +29,7 @@ namespace QuizManager
         // Update
 
         Task<ResponseData.Topic> UpdateTopicDescription(string topicId, string topicDescription);
-        
+        Task<ResponseData.Topic> UpdateTopic(string topicId, ResponseData.Topic topic);
         Task DeleteAnswer(string id);
         Task DeleteTopic(string id);
 
@@ -218,6 +218,25 @@ namespace QuizManager
                 };
             }
 
+            return null;
+        }
+
+        public async Task<ResponseData.Topic> UpdateTopic(string topicId, ResponseData.Topic topic)
+        {
+            var resultUpdatedTopicEntity = await _topicRepository.UpdateTopic(topicId, 
+                                new DataEntity.Topic {
+                                    Description = topic.Description,
+                                    Notes = topic.Notes
+                                });
+
+            if( resultUpdatedTopicEntity != null )
+            {
+                return new ResponseData.Topic {
+                    Id = resultUpdatedTopicEntity.Id,
+                    Description = resultUpdatedTopicEntity.Description,
+                    Notes = resultUpdatedTopicEntity.Notes
+                };
+            }
             return null;
         }
 

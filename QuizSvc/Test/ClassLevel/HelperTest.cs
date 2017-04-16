@@ -1,7 +1,9 @@
 using Xunit;
 using System;
 using System.Linq.Expressions;
-using QuizHealper;
+using QuizHelper;
+using FluentAssertions;
+
 namespace HelperTest
 {
     public class HelperTest
@@ -16,7 +18,7 @@ namespace HelperTest
                 Notes = notes
             };
 
-            var result = Healper.ExtractBindingsAndValues(inputValue);
+            var result = Helper.ExtractBindingsAndValues(inputValue);
             Assert.True(result.Count == 2);
         }
 
@@ -24,8 +26,8 @@ namespace HelperTest
         public void CanRetunNullWhenExpressionHasEmptyMember()
         {
             Expression<Func<DataEntity.Topic>> inputValue = () => new DataEntity.Topic();
+            var result = Helper.ExtractBindingsAndValues(inputValue);
 
-            var result = Healper.ExtractBindingsAndValues(inputValue);
             Assert.True(result.Count == 0);
         }
 
@@ -33,16 +35,17 @@ namespace HelperTest
         public void CanThrowExceptionWhenPassedNullToExtractBindings()
         {
             Expression<Func<DataEntity.Topic>> nullInput = null;
-            var ex = Assert.Throws<ArgumentException>( () => Healper.ExtractBindingsAndValues(nullInput));
-            Assert.Equal( "Invalid Expression", ex.Message );
+            var ex = Assert.Throws<ArgumentException>( () => Helper.ExtractBindingsAndValues(nullInput));
+            ex.Message.Should().BeEquivalentTo("Invalid Expression");
         }
 
         [Fact]
         public void CanReturnEmptywhenNullInitExpressionIsPassed()
         {
             Expression<Func<DataEntity.Topic>> nullInput = () => null;
-            var actualResult =  Healper.ExtractBindingsAndValues(nullInput);
+            var actualResult =  Helper.ExtractBindingsAndValues(nullInput);
             Assert.True(actualResult.Count == 0);
+            actualResult.Should().BeEmpty();
         }
     }
 }
