@@ -4,7 +4,6 @@ using DataEntity;
 using System.Linq;
 using QuizDataAccess;
 using QuizCaching;
-using System;
 
 namespace QuizRepository
 {

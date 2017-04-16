@@ -6,7 +6,7 @@
   "dependencies": {
     "DatabaseAccess" : "1.0.0-*",
     "Cache" : "1.0.0-*",
-    "Healper" : "1.0.0-*",
+    "Helper" : "1.0.0-*",
     "Microsoft.Extensions.Caching.Redis.Core" : "1.0.3",
     "Newtonsoft.Json": "9.0.1"
   },

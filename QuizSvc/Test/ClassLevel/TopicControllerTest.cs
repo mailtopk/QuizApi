@@ -127,7 +127,7 @@ namespace QuizSvcTest
         }
 
         [Fact]
-        public async void CanUpdateTopic()
+        public async void CanUpdateTopicDescription()
         {
             _dataAccessMock.Setup( dal => dal.Update<DataEntity.Topic>(
                     It.IsAny<string>(), It.IsAny<Expression<Func<DataEntity.Topic>>>()))
@@ -137,7 +137,66 @@ namespace QuizSvcTest
             var topicRep = new TopicRepository(_dataAccessMock.Object, null);
             var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
             
-            var result = await topicController.Update("mockId", "mockUpdatedDescription");
+            var result = await topicController.UpdateDescription("mockId", "mockUpdatedDescription");
+            
+            var statusCode = Assert.IsType<StatusCodeResult>(result);
+            statusCode.StatusCode.Should().Be(204, "Should return status code as modified");
+        }
+
+        [Fact]
+        public async void CanUpdateTopicEntity()
+        {
+             // Arrange
+            DataEntity.Topic returnVal = new DataEntity.Topic {
+                Description = "mockUpdateDescription",
+                Notes = "mockUpdateNotes"
+            };
+            _mockMongoDBCollection.Setup( c =>  
+                 c.FindOneAndUpdateAsync<DataEntity.Topic>(
+                        It.IsAny<MongoDB.Driver.FilterDefinition<DataEntity.Topic>>(),
+                        It.IsAny<MongoDB.Driver.UpdateDefinition<DataEntity.Topic>>(), 
+                        It.IsAny<FindOneAndUpdateOptions<DataEntity.Topic, DataEntity.Topic>>(),
+                        It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(returnVal);
+
+
+            _mockMongoDatabase.Setup( mdb => 
+                    mdb.GetCollection<DataEntity.Topic>(It.IsAny<string>(), 
+                                        It.IsAny<MongoCollectionSettings>())).Returns(_mockMongoDBCollection.Object);
+            
+            var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(_mockMongoDatabase.Object);
+            var topicRep = new TopicRepository(dataAccess, null);
+            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
+            
+           var  entity = new ResponseData.Topic{
+                Description = "mockDescription",
+                Notes = "mockNotes"
+            };
+
+            // Act
+            var result = await topicController.Update("58e5db28e40cc200151a5ba4", new ResponseData.TopicIgnoreUniqId {
+                Description = entity.Description,
+                Notes = entity.Notes
+            } );
+            
+            // Assert
+            var statusCode = Assert.IsType<StatusCodeResult>(result);
+            statusCode.StatusCode.Should().Be(204, "Should return status code as modified");
+        }
+
+        [Fact]
+        public async void CanUpdateTopicNotes()
+        {
+            _dataAccessMock.Setup( dal => dal.Update<DataEntity.Topic>(
+                    It.IsAny<string>(), It.IsAny<Expression<Func<DataEntity.Topic>>>()))
+                .ReturnsAsync(new DataEntity.Topic())
+                .Verifiable();
+            
+            var topicRep = new TopicRepository(_dataAccessMock.Object, null);
+            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
+            
+            
+            var result = await topicController.UpdateDescription("mockId", "mockUpdatedDescription");
             
             var statusCode = Assert.IsType<StatusCodeResult>(result);
             statusCode.StatusCode.Should().Be(204, "Should return status code as modified");
@@ -166,7 +225,7 @@ namespace QuizSvcTest
             var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
             
             // Act
-            var result = await topicController.Update("58e5db28e40cc200151a5ba4", "mockUpdatedDescription");
+            var result = await topicController.UpdateDescription("58e5db28e40cc200151a5ba4", "mockUpdatedDescription");
             
             // Assert
             var statusCode = Assert.IsType<StatusCodeResult>(result);
