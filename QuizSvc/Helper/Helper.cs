@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -27,9 +26,15 @@ namespace QuizHelper
                 var memberAssignment = binding as MemberAssignment;
 
                 var bindingValue = ExtractConstants(memberAssignment.Expression as MemberExpression);
-
                 if(bindingName != null && bindingValue != null)
                 {
+                    // var fooObj = new foo{ Name = "bar" }
+                    // (T) => new foo { Name = fooObj.Name }
+                    // TODO - ExtractConstants is called multiple time to do same work - fix this
+                    if(bindingValue.GetType().Equals(typeof(T)) )
+                    {
+                        bindingValue = GetFieldValue(bindingName, bindingValue);
+                    }
                     resultOfBindingAndValue.Add(bindingName, bindingValue);
                 }
             }
@@ -44,7 +49,6 @@ namespace QuizHelper
             var constExpression = memberExpression.Expression as ConstantExpression;
             if(constExpression == null)
             {
-                // TODO - inner expression 
                 // var fooObj = new foo{ Name = "nameValue" }
                 // (T) => new foo { Name = fooObj.Name }
                 var innerMemberExpression = memberExpression.Expression as MemberExpression;
@@ -55,7 +59,6 @@ namespace QuizHelper
                         throw new InvalidCastException("Can not convert to Constant Expression");
 
                     memberExpression = innerMemberExpression;
-                    // if code reach here - populate the properties - this code fails now....
                 }
             }
             if (constExpression != null)
@@ -70,6 +73,18 @@ namespace QuizHelper
                     return (((FieldInfo)field).GetValue(declaringObject));
                 }
             }
+            return null;
+        }
+
+        private static object GetFieldValue(string bindingName, object bindingValue)
+        {
+            if(bindingValue == null)
+                return null;
+            
+            var propInfos = bindingValue.GetType().GetRuntimeProperty(bindingName);
+            if(propInfos != null)
+                return propInfos.GetValue(bindingValue);
+
             return null;
         }
     }

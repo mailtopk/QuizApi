@@ -14,9 +14,9 @@ namespace QuizRepository
         Task<IEnumerable<Topic>> GetAllTopicsAsync();
         Task<Topic> GetTopicAsync(string id);
         Task AddTopicAsync(Topic topic);
-        Task<Topic> UpdateDescription(string id, string description);
-        Task<Topic> UpdateTopic(string id, Topic topic);
-        Task Delete(string id);
+        Task<Topic> UpdateDescriptionAsync(string id, string description);
+        Task<Topic> UpdateTopicAsync(string id, Topic topic);
+        Task DeleteAsync(string id);
     }
     public class TopicRepository : ITopicRepository
     {
@@ -64,24 +64,19 @@ namespace QuizRepository
             }
         }
 
-        public async Task<Topic> UpdateDescription(string id, string description)
+        public async Task<Topic> UpdateDescriptionAsync(string id, string description)
         {
             return await _quizDataAccess.Update<Topic>( 
                 id, () => new Topic { Description = description});
         }
 
-        public async Task<Topic> UpdateTopic(string id, Topic topic)
+        public async Task<Topic> UpdateTopicAsync(string id, Topic topic)
         {
-            // Expression has no support for Properties - this is work around
-            // TODO - support propertiesInfo in expression tree
-            var descr = topic.Description;
-            var notes = topic.Notes;
-
             return await _quizDataAccess.Update<Topic>( 
-                id, () => new Topic { Description = descr, Notes = notes});
+                id, () => new Topic { Description = topic.Description, Notes = topic.Notes});
         }
 
-        public async Task Delete(string id)
+        public async Task DeleteAsync(string id)
         {
             try
             {

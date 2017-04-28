@@ -25,7 +25,7 @@ namespace TopicController
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var results= await _quizManager.GetAllTopics();
+            var results= await _quizManager.GetAllTopicsAync();
             if(results != null)
                 return new OkObjectResult(results);
 
@@ -33,7 +33,7 @@ namespace TopicController
         }
 
         /// <summary>
-        /// Get Topic by topic uniqe id
+        /// Get Topic by topic unique id
         /// </summary>
         [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.OK)]
@@ -45,7 +45,7 @@ namespace TopicController
             
             try
             {
-                var results =  await _quizManager.GetTopicById(id);
+                var results =  await _quizManager.GetTopicByIdAsync(id);
                 return new ObjectResult(results);
             }
             catch (System.Exception ex)
@@ -68,9 +68,9 @@ namespace TopicController
              if( topic == null || string.IsNullOrEmpty(id) || 
                             string.IsNullOrEmpty(topic.Description) || 
                             string.IsNullOrEmpty(topic.Notes))
-                            {
-                                return BadRequest();
-                            }
+                {
+                    return BadRequest();
+                }
 
             var response = await _quizManager.UpdateTopic(id, topic);
             if(response != null)
@@ -123,7 +123,7 @@ namespace TopicController
         {
             try
             {
-                await _quizManager.AddTopic(topic);
+                await _quizManager.AddTopicAsync(topic);
             }
             catch(Exception ex)
             {

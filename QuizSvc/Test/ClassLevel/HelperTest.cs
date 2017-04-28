@@ -20,6 +20,8 @@ namespace HelperTest
 
             var result = Helper.ExtractBindingsAndValues(inputValue);
             Assert.True(result.Count == 2);
+            result.Should().ContainKey("Description").WhichValue.ShouldBeEquivalentTo("testingDescription");
+            result.Should().ContainKey("Notes").WhichValue.ShouldBeEquivalentTo("testingNotes");
         }
 
         [Fact]
@@ -46,6 +48,21 @@ namespace HelperTest
             var actualResult =  Helper.ExtractBindingsAndValues(nullInput);
             Assert.True(actualResult.Count == 0);
             actualResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CanReturnPropertiesAndValueWhenConstantExpressionIsAnObjectInstance()
+        {
+            var input = new DataEntity.Topic {
+                Id = "mockId",
+                Description = "mockDescription"
+            };
+            var result = Helper.ExtractBindingsAndValues( 
+                () => new DataEntity.Topic { Id = input.Id, Description = input.Description });
+            
+            result.Should().NotBeNull("Expected properties and values");
+            result.Should().ContainKey("Id").WhichValue.ShouldBeEquivalentTo("mockId");
+            result.Should().ContainKey("Description").WhichValue.ShouldBeEquivalentTo("mockDescription");
         }
     }
 }

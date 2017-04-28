@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using FluentAssertions;
 using MongoDB.Driver;
 using System.Threading;
+using MongoHelperTest;
 
 namespace QuizSvcTest
 {
@@ -29,11 +30,6 @@ namespace QuizSvcTest
         private Mock<IQuestionRepository> _quizRepository;
         private Mock<IAnswerRepository> _answerRepository;
 
-        // MongoDB
-        private Mock<IMongoDatabase> _mockMongoDatabase;
-        private Mock<IAsyncCursor<DataEntity.Topic>>  _mockMongoDBCursor;
-        private Mock<MongoDB.Driver.IMongoCollection<DataEntity.Topic>> _mockMongoDBCollection;
-
         public TopicControllerTests()
         {
              _dataAccessMock = new Mock<IQuizDataAccess<DataEntity.Topic>>();
@@ -42,12 +38,6 @@ namespace QuizSvcTest
              _quizRepository = new Mock<IQuestionRepository>();
              _answerRepository = new Mock<IAnswerRepository>();
              _loggerMock = new Mock<ILogger<TopicController.TopicController>>();
-
-
-             // Mongo DB 
-             _mockMongoDatabase = new Mock<IMongoDatabase>();
-             _mockMongoDBCursor = new Mock<IAsyncCursor<DataEntity.Topic>>();
-             _mockMongoDBCollection = new Mock<MongoDB.Driver.IMongoCollection<DataEntity.Topic>>();
 
             _quizManager = new QuizManager.QuizManager(
                     _topicRepository.Object, _quizRepository.Object, _answerRepository.Object);
@@ -151,7 +141,9 @@ namespace QuizSvcTest
                 Description = "mockUpdateDescription",
                 Notes = "mockUpdateNotes"
             };
-            _mockMongoDBCollection.Setup( c =>  
+
+            var mockMongoDBCollection = MongoHelper<DataEntity.Topic>.GetMockMongoCollection();
+            mockMongoDBCollection.Setup( c =>  
                  c.FindOneAndUpdateAsync<DataEntity.Topic>(
                         It.IsAny<MongoDB.Driver.FilterDefinition<DataEntity.Topic>>(),
                         It.IsAny<MongoDB.Driver.UpdateDefinition<DataEntity.Topic>>(), 
@@ -159,12 +151,12 @@ namespace QuizSvcTest
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(returnVal);
 
-
-            _mockMongoDatabase.Setup( mdb => 
+            var mockMongoDatabase = MongoHelper<DataEntity.Topic>.GetMockMongoDBInstance();
+            mockMongoDatabase.Setup( mdb => 
                     mdb.GetCollection<DataEntity.Topic>(It.IsAny<string>(), 
-                                        It.IsAny<MongoCollectionSettings>())).Returns(_mockMongoDBCollection.Object);
+                                        It.IsAny<MongoCollectionSettings>())).Returns(mockMongoDBCollection.Object);
             
-            var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(_mockMongoDatabase.Object);
+            var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(mockMongoDatabase.Object);
             var topicRep = new TopicRepository(dataAccess, null);
             var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
             
@@ -205,7 +197,8 @@ namespace QuizSvcTest
         {
             // Arrange
             DataEntity.Topic returnVal = null;
-            _mockMongoDBCollection.Setup( c =>  
+            var mockMongoDBCollection = MongoHelper<DataEntity.Topic>.GetMockMongoCollection();
+            mockMongoDBCollection.Setup( c =>  
                  c.FindOneAndUpdateAsync<DataEntity.Topic>(
                         It.IsAny<MongoDB.Driver.FilterDefinition<DataEntity.Topic>>(),
                         It.IsAny<MongoDB.Driver.UpdateDefinition<DataEntity.Topic>>(), 
@@ -213,12 +206,12 @@ namespace QuizSvcTest
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(returnVal);
 
-
-            _mockMongoDatabase.Setup( mdb => 
+            var mockMongoDatabase = MongoHelper<DataEntity.Topic>.GetMockMongoDBInstance();
+            mockMongoDatabase.Setup( mdb => 
                     mdb.GetCollection<DataEntity.Topic>(It.IsAny<string>(), 
-                                        It.IsAny<MongoCollectionSettings>())).Returns(_mockMongoDBCollection.Object);
+                                        It.IsAny<MongoCollectionSettings>())).Returns(mockMongoDBCollection.Object);
             
-            var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(_mockMongoDatabase.Object);
+            var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(mockMongoDatabase.Object);
             var topicRep = new TopicRepository(dataAccess, null);
             var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
             

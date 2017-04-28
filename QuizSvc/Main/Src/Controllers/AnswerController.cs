@@ -26,7 +26,7 @@ namespace Answer
         {
             try
             {
-                var results = await _quizManager.GetAllAnswers();
+                var results = await _quizManager.GetAllAnswersAsync();
                 return new OkObjectResult(results);
             }
             catch(Exception ex)
@@ -50,7 +50,7 @@ namespace Answer
                 if(string.IsNullOrEmpty(id))
                     return BadRequest();
 
-                var result = await _quizManager.GetAnswerById(id);
+                var result = await _quizManager.GetAnswerByIdAsync(id);
                 if(result != null)
                     return new OkObjectResult(result);
             }
@@ -71,11 +71,11 @@ namespace Answer
         {
              try
             {
-                var question = _quizManager.GetQuestionById(questionId);
+                var question = _quizManager.GetQuestionByIdAsync(questionId);
                 if( question == null )
                     return BadRequest("Question Not found");
 
-                await _quizManager.AddAnswer( new ResponseData.Answer {
+                await _quizManager.AddAnswerAsync( new ResponseData.Answer {
                     QuestionId = questionId,
                     Description = answer.Description,
                     Notes = answer.Notes
@@ -108,7 +108,7 @@ namespace Answer
         [SwaggerResponse(HttpStatusCode.NoContent)]
         public async Task<IActionResult> Delete( string id)
         {
-            var answer = _quizManager.GetAnswerById(id);
+            var answer = _quizManager.GetAnswerByIdAsync(id);
             if(answer == null)
                 return NotFound("Answer not found");
 

@@ -11,8 +11,10 @@ namespace QuizRepository
     {
         Task<IEnumerable<Question>> GetAllQuestionsAsync();
         Task<Question> GetQuestionAsync(string questionId);
-        Task<IEnumerable<Question>> GetQuestionsByTopic(string topicId);
+        Task<IEnumerable<Question>> GetQuestionsByTopicAsync(string topicId);
         Task AddQuestionAsync(Question topic);
+
+        Task<Question> UpdateAsync(string questionId, Question question);
     }
 
     public class QuestionRepository : IQuestionRepository
@@ -46,9 +48,18 @@ namespace QuizRepository
              });
         }
 
-        public async Task<IEnumerable<Question>> GetQuestionsByTopic(string topicId)
+        public async Task<IEnumerable<Question>> GetQuestionsByTopicAsync(string topicId)
         {
             return await _quizDataAccess.GetByFieldNameAsync("TopicId", topicId);
+        }
+
+        public async Task<Question> UpdateAsync(string questionId, Question question)
+        {
+            return await _quizDataAccess.Update(questionId,  () => new Question {
+                    TopicId = question.TopicId, 
+                    Description = question.Description, 
+                    Notes = question.Notes
+                } ) ;
         }
     }
 }

@@ -19,6 +19,7 @@
     "System.Diagnostics.TraceSource":"4.0.0",
     "Newtonsoft.Json": "9.0.1",
     "Microsoft.Extensions.Caching.Redis.Core" : "1.0.3",
+    "Microsoft.AspNet.JsonPatch" : "1.0.0-rc1-final",
     "FluentAssertions" : "4.19.2"
   },
   "testRunner": "xunit",
