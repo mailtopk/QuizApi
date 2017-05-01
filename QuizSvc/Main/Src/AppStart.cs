@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using QuizCaching;
 using QuizRepository;
 using Swashbuckle.Swagger.Model;
+using QuizSwagger;
 using QuizManager;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
@@ -33,7 +34,10 @@ namespace QuizSvc
                 }));
             var basePath = PlatformServices.Default.Application.ApplicationBasePath;
             var xmlFile = Path.Combine(basePath, "Main.xml");
-            services.ConfigureSwaggerGen( swaggerConfig => swaggerConfig.IncludeXmlComments(xmlFile));
+            services.ConfigureSwaggerGen( swaggerConfig => { 
+                swaggerConfig.IncludeXmlComments(xmlFile);
+                swaggerConfig.OperationFilter<QuizSwaggerFilter>();
+                });
 
 
             // Redis

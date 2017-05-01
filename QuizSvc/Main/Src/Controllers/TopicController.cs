@@ -79,9 +79,9 @@ namespace TopicController
             return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
 
-        /// <summary>
-        /// Update Description of an existing Topic
-        /// </summary>
+        /// <summary>Update Description of an existing Topic</summary>
+        /// <param name="id"> Topic id </param>
+        /// <param name="description"> Topic Description </param>
         [HttpPatch("{id}/{description}")]
         [SwaggerResponse(HttpStatusCode.NotModified)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -98,9 +98,8 @@ namespace TopicController
             return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
 
-        /// <summary>
-        /// Delete an existing Topic
-        /// </summary>
+        /// <summary> Delete an existing Topic </summary>
+        /// <param name="id"> Topic id </param>
         [HttpDelete("{id}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NoContent)]
@@ -113,9 +112,8 @@ namespace TopicController
             return NoContent();
         }
 
-        /// <summary>
-        /// Create new Topic
-        /// </summary>
+        /// <summary>Create new Topic</summary>
+        /// <param name="topic">Topic entity object value</param>
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
         [SwaggerResponseAttribute(HttpStatusCode.BadRequest)]

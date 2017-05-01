@@ -134,12 +134,25 @@ namespace Question
             
             return BadRequest();
         }
-
-      
-        /// <summary>
-        /// Update Question Properties
-        /// </summary>
+        
+        /// <summary> Update Question Properties </summary>
+        /// <param name="questionId"> Existing Question Id </param>
+        /// <response code="200">Returns updated item</response>
+        /// <remarks>
+        /// Example - Replace Topic id for an existing Question. 
+        /// Note - Topic id should be an exisint topic id.
+        ///
+        /// PATCH /Questions
+        /// [
+        ///   {
+        ///     "op": "replace",
+        ///     "value": "59046a901b9fbd0016f2f04c",
+        ///     "path": "/topicId"
+        ///   }
+        /// ]
+        /// </remarks>
         [HttpPatch("{questionId}")]
+        [ProducesResponseType(typeof(ResponseData.Question), 200)]
         public  async Task<IActionResult> UpdateTopic(string questionId, [FromBodyAttribute] 
                                     JsonPatchDocument<ResponseData.QuestionIgnoreId> questions)
         {                           // https://tools.ietf.org/html/rfc6902
