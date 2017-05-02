@@ -2,9 +2,14 @@
 This is a RESTful web service to build Quiz/Flashcard .
 
 It has three part
-   1. Topic - Topic/Chapers are root objects.
-   2. Question - Questions fall into one bucket of topic
+   1. Topic - Topic/Chapters are root objects.
+   2. Question - These are the child objects of topic.
    3. Answers - Answers to the questions. 
+
+Example : -
+>Topic - *Math.*
+>Question - *What is 2 + 4.*
+>Answer - *6.*
 
 *Note*: This project is initial prototype 
 
@@ -12,8 +17,11 @@ It has three part
 ## Topics
 ![ScreenShot](/QuizSvc/Images/topics.png)
 
+## Questions
+![ScreenShot](/QuizSvc/Images/questions.png)
 
-*   Directory strcture
+
+*   Directory structure
 ```
 /QuizSvc
   |
@@ -64,8 +72,8 @@ https://github.com/mailtopk/QuizApi.git
     - [Docker](https://www.docker.com/)
     
 ### Build docker images (web service, mongodb and redis)
-Build docker images, web service, mongodb and redis cacheing.
-Make sure your current directrly is QuizSvc
+Build docker images, web service, mongodb and redis caching.
+Make sure your current directory is QuizSvc
 ```
     $ docker-compose build
 ```
@@ -82,7 +90,7 @@ At this point docker container's should be up and running.
 ``` 
 
 ### Run API explorer
-Get list of all the enpoint, below api explorer
+Get list of all the endpoint, below api explorer
 ```
     http://localhost:8080/swagger/ui/index.html
 ```
@@ -95,8 +103,9 @@ At this point quiz web service is ready to use.
 ```
 
 ### To do
-- [ x ] Support to update Topic
-- [  ] Support to update Question
-- [  ] Support to update Answer
-- [  ] Build UI
-- [ x ] Add Swagger documentation
+- [x] Support to update Topic
+- [x] Support to update Question
+- [ ] Support to update Answer
+- [ ] Build UI
+- [x] Add Swagger documentation
+- [ ] Multiple answer for one questions 

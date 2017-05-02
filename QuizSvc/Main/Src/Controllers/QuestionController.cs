@@ -19,9 +19,7 @@ namespace Question
              _quizManager = quizManager;
          }
 
-         /// <summary>
-        /// Get all Question's
-        /// </summary>
+         /// <summary>Get all Questions</summary>
          [HttpGet]
          [SwaggerResponse(HttpStatusCode.BadRequest)]
          public async Task<IActionResult>  GetAll()
@@ -38,9 +36,7 @@ namespace Question
              }
          } 
 
-         /// <summary>
-        /// Get Question by question unique id
-        /// </summary>
+         /// <summary>Get Question by id</summary>
         [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(string id)
@@ -52,9 +48,7 @@ namespace Question
             return NotFound();
         }  
 
-        /// <summary>
-        /// Get Questions for a given topic
-        /// </summary>
+        /// <summary>Get Question for a given topic</summary>
         [HttpGet("{topicId}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
@@ -70,9 +64,7 @@ namespace Question
             return NotFound();
         }
 
-        /// <summary>
-        /// Create new Question
-        /// </summary>
+        /// <summary>Create new Question</summary>
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.Created)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -106,18 +98,14 @@ namespace Question
             return new StatusCodeResult((int)HttpStatusCode.Created);
         }
 
-        /// <summary>
-        /// Delete Question
-        /// </summary>
+        /// <summary>Delete Question</summary>
         [HttpDelete("{id}")]
         public Task<IActionResult> Delete(string id)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Update Question
-        /// </summary>
+        /// <summary>Update Question</summary>
         [HttpPut("{id}")]
         [SwaggerResponse(HttpStatusCode.NoContent)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]

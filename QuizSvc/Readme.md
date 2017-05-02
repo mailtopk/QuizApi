@@ -1,8 +1,8 @@
 # Project Details
 This is a RESTful web service to build Quiz/Flashcard .
 
-## Debuging under Docker environment 
-* Get container info if runing
+## Debugging under Docker environment 
+* Get container info if running
 ``` 
     $ docker inspect <containerId>
 ``` 
@@ -71,7 +71,7 @@ Run image
 ```
 
 ## Building Project using dotnet 
-This will help in debuging application on local machine
+This will help in debugging application on local machine
 
 * Required Software
     - [Microsoft dotnet core](https://www.microsoft.com/net/core) 
