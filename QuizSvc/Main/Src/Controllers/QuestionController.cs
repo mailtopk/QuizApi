@@ -37,11 +37,12 @@ namespace Question
          } 
 
          /// <summary>Get Question by id</summary>
-        [HttpGet("{id}")]
+         /// <param name="topicId">Topic Id</param>
+        [HttpGet("{topicId}")]
         [SwaggerResponse(HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string topicId)
         {
-            var response = await _quizManager.GetQuestionByIdAsync(id);
+            var response = await _quizManager.GetQuestionByIdAsync(topicId);
             if(response != null)
                 return new OkObjectResult(response);
 
@@ -49,6 +50,7 @@ namespace Question
         }  
 
         /// <summary>Get Question for a given topic</summary>
+        /// <param name="topicId">Topic Id</param>
         [HttpGet("{topicId}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
@@ -65,6 +67,7 @@ namespace Question
         }
 
         /// <summary>Create new Question</summary>
+        /// <param name="question">Question</param>
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.Created)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -99,13 +102,28 @@ namespace Question
         }
 
         /// <summary>Delete Question</summary>
+        /// <param name="id">Question Id</param>
         [HttpDelete("{id}")]
-        public Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            throw new NotImplementedException();
+            if(string.IsNullOrEmpty(id))
+                return BadRequest();
+            try
+            {
+                await _quizManager.DeleteQuestionAsync(id);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"[Error ]{ex}");
+                return BadRequest();
+            }
+
+            return NoContent();
         }
 
         /// <summary>Update Question</summary>
+        /// <param name="id"> Question Id</param>
+        /// <param name="question"> Question </param>
         [HttpPut("{id}")]
         [SwaggerResponse(HttpStatusCode.NoContent)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -125,6 +143,7 @@ namespace Question
         
         /// <summary> Update Question Properties </summary>
         /// <param name="questionId"> Existing Question Id </param>
+        /// <param name="questions"> JSON Patch - rfc6902 </param>
         /// <response code="200">Returns updated item</response>
         /// <remarks>
         /// Example - Replace Topic id for an existing Question. 
@@ -151,24 +170,8 @@ namespace Question
              if( string.IsNullOrEmpty(questionId) )
                 return BadRequest("Question Id not valid");
 
-            // TODO - SRP is broken - fix this
-            var existingQuestion = await _quizManager.GetQuestionByIdAsync(questionId);
-            if(existingQuestion == null || questions == null)
-                return NotFound();
-
-            // TODO - automapper ?
-            var questionUpdateRequest = new ResponseData.QuestionIgnoreId{
-                Description = existingQuestion.Description,
-                Notes = existingQuestion.Notes,
-                TopicId = existingQuestion.TopicId
-            };
-
-            if(questionUpdateRequest != null)
-                questions.ApplyTo(questionUpdateRequest );
-            
-
-            var updatedResult = await _quizManager.PatchQuestion(
-                                questionId, questionUpdateRequest);
+            var updatedResult = await _quizManager.UpdateQuestionAsync(
+                                questionId, questions);
 
             if( updatedResult != null)
                 return Ok(updatedResult);

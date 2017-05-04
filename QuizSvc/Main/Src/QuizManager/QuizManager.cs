@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using QuizRepository;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.JsonPatch;
+using ResponseData;
 
 namespace QuizManager
 {
@@ -22,21 +24,20 @@ namespace QuizManager
         // Add 
         Task<string> AddTopicAsync(ResponseData.Topic topic);
         Task<string> AddQuestionAsync(ResponseData.Question question);
-        Task<IEnumerable<ResponseData.Answer>> GetAnswersByQuestionIdAsync(string questionId);
         Task<string> AddAnswerAsync(ResponseData.Answer answer);
         
         
         // Update
-
-        Task<ResponseData.Topic> UpdateTopicDescription(string topicId, string topicDescription);
         Task<ResponseData.Topic> UpdateTopic(string topicId, ResponseData.Topic topic);
+        Task<ResponseData.Topic> UpdateTopicAsync(string id, JsonPatchDocument<TopicIgnoreUniqId> topic);
         Task<ResponseData.Question> UpdateQuestionAsync(string questionId, ResponseData.Question question);
-        Task<ResponseData.Question> PatchQuestion(string questionId, ResponseData.QuestionIgnoreId question);
+        Task<ResponseData.Question> UpdateQuestionAsync(string questionId, JsonPatchDocument<QuestionIgnoreId> question);
 
         // Delete
-        Task DeleteAnswer(string id);
-        Task DeleteTopic(string id);
-
+        Task DeleteAnswerAsync(string id);
+        Task DeleteTopicAsync(string id);
+        Task DeleteQuestionAsync(string id);
+        
     }
 
     public class QuizManager : IQuizManager
@@ -194,37 +195,36 @@ namespace QuizManager
             return ""; // Fix this
         }
 
-        public async Task<IEnumerable<ResponseData.Answer>> GetAnswersByQuestionIdAsync(string questionId)
+        public async Task<ResponseData.Topic>  UpdateTopicAsync(string id, 
+                                        JsonPatchDocument<TopicIgnoreUniqId> topic)
         {
-            var results = await _answerRepository.GetAnswerByQuestionId(questionId);
-            if(results != null)
-            {
-                return results.Select( a => new ResponseData.Answer {
-                    Id = a.Id,
-                    QuestionId = a.QuestionId,
-                    Description = a.Description,
-                    Notes = a.Notes
-                });
-            }
+            var existingTopic = await _topicRepository.GetTopicAsync(id);
+            if(existingTopic == null)
+                return null;
+            var updateTopicRequest = new ResponseData.TopicIgnoreUniqId{
+                Id = existingTopic.Id,
+                Description = existingTopic.Description,
+                Notes = existingTopic.Notes
+            };
 
-            return null;
-        }
+            topic.ApplyTo(updateTopicRequest);
+            
 
-        public async Task<ResponseData.Topic> UpdateTopicDescription(string topicId, string topicDescription)
-        {
-            var updatedEntity = await _topicRepository.UpdateDescriptionAsync(topicId, topicDescription);
-            if( updatedEntity != null )
-            {
+            var updatedResult = await _topicRepository.UpdateTopicAsync(id,  new DataEntity.Topic {
+                Id = id,
+                Description = updateTopicRequest.Description,
+                Notes = updateTopicRequest.Notes
+            });
+
+            if(updatedResult != null)
                 return new ResponseData.Topic {
-                    Id = updatedEntity.Id,
-                    Description = updatedEntity.Description,
-                    Notes = updatedEntity.Notes
+                    Id = updatedResult.Id,
+                    Description = updateTopicRequest.Description,
+                    Notes = updateTopicRequest.Notes
                 };
-            }
 
             return null;
         }
-
         public async Task<ResponseData.Topic> UpdateTopic(string topicId, ResponseData.Topic topic)
         {
             var resultUpdatedTopicEntity = await _topicRepository.UpdateTopicAsync (topicId, 
@@ -273,14 +273,28 @@ namespace QuizManager
             return null;
         }
 
-        public async Task<ResponseData.Question> PatchQuestion(string questionId, 
-                                            ResponseData.QuestionIgnoreId question)
+        public async Task<ResponseData.Question> UpdateQuestionAsync(string questionId, 
+                                            JsonPatchDocument<ResponseData.QuestionIgnoreId> question)
         {
+            var existingQuestion = await _questionRepository.GetQuestionAsync(questionId);
+            if(existingQuestion == null )
+                return null;
+
+            // TODO - automapper ?
+            var questionUpdateRequest = new ResponseData.QuestionIgnoreId{
+                Description = existingQuestion.Description,
+                Notes = existingQuestion.Notes,
+                TopicId = existingQuestion.TopicId
+            };
+
+            if(questionUpdateRequest != null)
+                question.ApplyTo(questionUpdateRequest);
+
             // TODO - update only the properties which are changed.
             var result = await _questionRepository.UpdateAsync(questionId, new DataEntity.Question {
-                TopicId = question.TopicId,
-                Description = question.Description,
-                Notes = question.Notes
+                TopicId = questionUpdateRequest.TopicId,
+                Description = questionUpdateRequest.Description,
+                Notes = questionUpdateRequest.Notes
             });
 
             return new ResponseData.Question{
@@ -291,7 +305,7 @@ namespace QuizManager
             };
         }
 
-        public async Task DeleteTopic(string id)
+        public async Task DeleteTopicAsync(string id)
         {
             if(string.IsNullOrEmpty(id))
                 throw new ArgumentException("Invalid topic id");
@@ -299,7 +313,14 @@ namespace QuizManager
             await _topicRepository.DeleteAsync(id);
         }
 
-        public async Task DeleteAnswer(string id)
+        public async Task DeleteQuestionAsync(string id)
+        {
+            if(string.IsNullOrEmpty(id))
+                throw new ArgumentException("Invalid question id");
+
+            await _questionRepository.DeleteAsync(id);
+        }
+        public async Task DeleteAnswerAsync(string id)
         {
             if(string.IsNullOrEmpty(id))
                 throw new ArgumentException("Invalid answer Id");
@@ -307,6 +328,5 @@ namespace QuizManager
             await _answerRepository.Delete(id);
         }
     }
-
 
 }

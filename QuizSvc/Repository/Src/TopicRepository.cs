@@ -14,7 +14,6 @@ namespace QuizRepository
         Task<IEnumerable<Topic>> GetAllTopicsAsync();
         Task<Topic> GetTopicAsync(string id);
         Task AddTopicAsync(Topic topic);
-        Task<Topic> UpdateDescriptionAsync(string id, string description);
         Task<Topic> UpdateTopicAsync(string id, Topic topic);
         Task DeleteAsync(string id);
     }
@@ -62,12 +61,6 @@ namespace QuizRepository
                 //     await _quizCache.SaveToCacheAsync(newTopicId, topic);
                 // }
             }
-        }
-
-        public async Task<Topic> UpdateDescriptionAsync(string id, string description)
-        {
-            return await _quizDataAccess.Update<Topic>( 
-                id, () => new Topic { Description = description});
         }
 
         public async Task<Topic> UpdateTopicAsync(string id, Topic topic)

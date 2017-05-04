@@ -112,7 +112,7 @@ namespace Answer
             if(answer == null)
                 return NotFound("Answer not found");
 
-            await _quizManager.DeleteAnswer(id);
+            await _quizManager.DeleteAnswerAsync(id);
             return NoContent();
         }
     }

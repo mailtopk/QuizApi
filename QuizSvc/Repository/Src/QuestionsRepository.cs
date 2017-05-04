@@ -4,6 +4,7 @@ using System.Linq;
 using DataEntity;
 using QuizDataAccess;
 using QuizCaching;
+using System;
 
 namespace QuizRepository
 {
@@ -13,8 +14,8 @@ namespace QuizRepository
         Task<Question> GetQuestionAsync(string questionId);
         Task<IEnumerable<Question>> GetQuestionsByTopicAsync(string topicId);
         Task AddQuestionAsync(Question topic);
-
         Task<Question> UpdateAsync(string questionId, Question question);
+        Task DeleteAsync(string questionId);
     }
 
     public class QuestionRepository : IQuestionRepository
@@ -60,6 +61,14 @@ namespace QuizRepository
                     Description = question.Description, 
                     Notes = question.Notes
                 } ) ;
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            if(string.IsNullOrEmpty(id))
+                throw new ArgumentException();
+
+            await _quizDataAccess.Delete(id);
         }
     }
 }

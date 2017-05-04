@@ -5,6 +5,7 @@ using System.Net;
 using QuizManager;
 using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace TopicController
 {
@@ -19,9 +20,7 @@ namespace TopicController
             _loggerTopic = logger;
         }
 
-        /// <summary>
-        /// Get all Topics
-        /// </summary>
+        /// <summary>Get all Topics</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -32,9 +31,8 @@ namespace TopicController
             return new OkResult();
         }
 
-        /// <summary>
-        /// Get Topic by topic unique id
-        /// </summary>
+        /// <summary>Get Topic by topic unique id</summary>
+        /// <param name="id"> Topic Id </param>
         [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.OK)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -55,9 +53,9 @@ namespace TopicController
             }
         }
 
-        /// <summary>
-        /// Update existing Topic
-        /// </summary>
+        /// <summary> Update existing Topic </summary>
+        /// <param name="id">Topic Id</param>
+        /// <param name="topic">Topic</param>
         [HttpPut("{id}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
@@ -72,31 +70,65 @@ namespace TopicController
                     return BadRequest();
                 }
 
-            var response = await _quizManager.UpdateTopic(id, topic);
-            if(response != null)
-                return new StatusCodeResult((int)HttpStatusCode.NoContent);
+            try
+            {
+                 var response = await _quizManager.UpdateTopic(id, topic);
+                if(response != null)
+                    return new StatusCodeResult((int)HttpStatusCode.NoContent);
+            }
+            catch(Exception ex)
+            {
+                _loggerTopic.LogCritical($"Error in topic Update : {ex}");
+            }
 
             return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
 
-        /// <summary>Update Description of an existing Topic</summary>
+        /// <summary>Update an existing Topic</summary>
         /// <param name="id"> Topic id </param>
-        /// <param name="description"> Topic Description </param>
-        [HttpPatch("{id}/{description}")]
+        /// <param name="topic"> JSON Patch - rfc6902 </param>
+        /// <remarks>
+        /// Example - Replace Topic description and add notes for an existing Question. 
+        /// Note - Topic id should be an exisint topic id.
+        ///
+        /// PATCH /topics
+        /// [
+        ///   {
+        ///     "op": "replace",
+        ///     "path": "/description"
+        ///     "value": "Description foo"
+        ///   }
+        ///   {
+        ///     "op": "add",
+        ///     "path": "/notes"
+        ///     "value": "new foo notes"
+        ///   }
+        /// ]
+        ///
+        /// </remarks>
+        [HttpPatch("{id}")]
         [SwaggerResponse(HttpStatusCode.NotModified)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
-        [SwaggerResponse(HttpStatusCode.NoContent)]
-        public async Task<IActionResult> UpdateDescription(string id, string description )
+        [SwaggerResponse(HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateTopic(string id, 
+                            [FromBodyAttribute] JsonPatchDocument<ResponseData.TopicIgnoreUniqId> topic )
         {
-            if(string.IsNullOrEmpty(id) || string.IsNullOrEmpty(description))
+            if(topic == null || string.IsNullOrEmpty(id))
                 return BadRequest();
-
-            var response = await _quizManager.UpdateTopicDescription(id, description);
-            if(response != null)
-                return new StatusCodeResult((int)HttpStatusCode.NoContent);
+            try
+            {
+                var updatedTopic = await _quizManager.UpdateTopicAsync(id, topic);
+                if(updatedTopic != null)
+                    return Ok(updatedTopic);
+            }
+            catch(Exception ex)
+            {
+                _loggerTopic.LogCritical($"AddTopic{ex}");
+            }
 
             return new StatusCodeResult((int)HttpStatusCode.NotModified);
         }
+
 
         /// <summary> Delete an existing Topic </summary>
         /// <param name="id"> Topic id </param>
@@ -108,12 +140,12 @@ namespace TopicController
             if(string.IsNullOrEmpty(id))
                 return BadRequest();
 
-            await _quizManager.DeleteTopic(id);
+            await _quizManager.DeleteTopicAsync(id);
             return NoContent();
         }
 
         /// <summary>Create new Topic</summary>
-        /// <param name="topic">Topic entity object value</param>
+        /// <param name="topic">Topic</param>
         [HttpPost]
         [SwaggerResponseAttribute(HttpStatusCode.Created)]
         [SwaggerResponseAttribute(HttpStatusCode.BadRequest)]
@@ -132,6 +164,5 @@ namespace TopicController
            // Response.Headers.Add("Location", ""); // TODO send new objectid 
             return new StatusCodeResult((int)HttpStatusCode.Created);
         }
-
     }
 }

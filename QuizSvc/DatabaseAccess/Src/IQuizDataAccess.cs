@@ -11,6 +11,6 @@ namespace QuizDataAccess
         Task<IEnumerable<T>> GetByFieldNameAsync(string fieldName, string searchValue );
         Task<string> AddAsync(T newDocument);
         Task<T> Update<TUpdate>(string documentId, Expression<Func<TUpdate>> entityToUpdate);
-        Task Delete(string answerId);
+        Task Delete(string id);
     }
 }

@@ -15,6 +15,8 @@ using FluentAssertions;
 using MongoDB.Driver;
 using System.Threading;
 using MongoHelperTest;
+using Microsoft.AspNetCore.JsonPatch;
+using System.Linq;
 
 namespace QuizSvcTest
 {
@@ -59,10 +61,7 @@ namespace QuizSvcTest
                     Notes = "mockNotes"
                 };
   
-            _topicCacheMock.Setup( p => p.GetValueFromKeyAsync(
-                            It.IsAny<string>(),  
-                            It.IsAny<Func<string, Task<DataEntity.Topic>>>()))
-                                .ReturnsAsync(mockResults);
+            MockTopicCache(mockResults);
 
             _topicRepository.Setup( t => t.GetTopicAsync(It.IsAny<string>()))
                             .ReturnsAsync(mockResults)
@@ -117,20 +116,48 @@ namespace QuizSvcTest
         }
 
         [Fact]
-        public async void CanUpdateTopicDescription()
+        public async void CanPartialUpdateTopicDescription()
         {
-            _dataAccessMock.Setup( dal => dal.Update<DataEntity.Topic>(
+            _dataAccessMock.Setup(dal => dal.Update<DataEntity.Topic>(
                     It.IsAny<string>(), It.IsAny<Expression<Func<DataEntity.Topic>>>()))
                 .ReturnsAsync(new DataEntity.Topic())
                 .Verifiable();
-            
-            var topicRep = new TopicRepository(_dataAccessMock.Object, null);
-            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
-            
-            var result = await topicController.UpdateDescription("mockId", "mockUpdatedDescription");
-            
-            var statusCode = Assert.IsType<StatusCodeResult>(result);
-            statusCode.StatusCode.Should().Be(204, "Should return status code as modified");
+
+            MockTopicCache( new DataEntity.Topic {
+                Id = "5883a3fa50f5fea2822f21cf",
+                Description = "mockedDescription",
+                Notes = "mockNotes"
+            } );
+
+            var topicRep = new TopicRepository(_dataAccessMock.Object, _topicCacheMock.Object);
+            var topicController = new TopicController.TopicController(new QuizManager.QuizManager(topicRep, null, null), null);
+
+            var jsonPatchRequest = new JsonPatchDocument<ResponseData.TopicIgnoreUniqId>();
+            jsonPatchRequest.Replace((q) => q.Description, "mockDescriptionToUpdate");
+
+            var result = await topicController.UpdateTopic("mockId", jsonPatchRequest);
+
+            var objectResult = Assert.IsType<OkObjectResult>(result);
+            objectResult.StatusCode.Should().Be(200, "Should return status code as modified");
+            var updatedResult = Assert.IsAssignableFrom<ResponseData.Topic>(((ObjectResult)result).Value);
+            updatedResult.Description.Should().Equals("mockDescriptionToUpdate");
+            updatedResult.Notes.Should().Equals("mockNotes");
+            updatedResult.Id.Should().Equals("5883a3fa50f5fea2822f21cf");
+        }
+
+        private void MockTopicCache( DataEntity.Topic topic )
+        {
+            var mockResults = new DataEntity.Topic
+            {
+                Id = topic.Id,
+                Description = topic.Description,
+                Notes = topic.Notes
+            };
+
+            _topicCacheMock.Setup(p => p.GetValueFromKeyAsync(
+                            It.IsAny<string>(),
+                            It.IsAny<Func<string, Task<DataEntity.Topic>>>()))
+                                .ReturnsAsync(mockResults);
         }
 
         [Fact]
@@ -177,19 +204,41 @@ namespace QuizSvcTest
         }
 
         [Fact]
-        public async void CanUpdateTopicNotes()
+        public async void CanPartialUpdateTopicNotes()
         {
+            // Arrange
+            var expectedResult = new DataEntity.Topic {
+                 Id = "5883a3fa50f5fea2822f21cf",
+                Description = "mockedDescription",
+                Notes = "mockNotesDescriptionForUpdate"
+            } ;
+
             _dataAccessMock.Setup( dal => dal.Update<DataEntity.Topic>(
                     It.IsAny<string>(), It.IsAny<Expression<Func<DataEntity.Topic>>>()))
-                .ReturnsAsync(new DataEntity.Topic())
+                .ReturnsAsync(expectedResult)
                 .Verifiable();
             
-            var topicRep = new TopicRepository(_dataAccessMock.Object, null);
-            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
-            var result = await topicController.UpdateDescription("mockId", "mockUpdatedDescription");
+            MockTopicCache( new DataEntity.Topic {
+                 Id = "5883a3fa50f5fea2822f21cf",
+                Description = "mockedDescription",
+                Notes = "mockNotes"
+            } );
+
+            var topicRep = new TopicRepository(_dataAccessMock.Object, _topicCacheMock.Object);
+            var topicController = new TopicController.TopicController( 
+                            new QuizManager.QuizManager(topicRep, null, null), null);
             
-            var statusCode = Assert.IsType<StatusCodeResult>(result);
-            statusCode.StatusCode.Should().Be(204, "Should return status code as modified");
+            var jsonPatchRequest = new JsonPatchDocument<ResponseData.TopicIgnoreUniqId>();
+            jsonPatchRequest.Replace( (q) => q.Notes, expectedResult.Notes);
+
+            // Act
+            var result = await topicController.UpdateTopic("mockId",jsonPatchRequest);
+            
+            // Assert
+            var updatedResult = Assert.IsAssignableFrom<ResponseData.Topic>(((ObjectResult)(result)).Value);
+            updatedResult.Notes.Should().BeEquivalentTo("mockNotesDescriptionForUpdate");
+            updatedResult.Description.Should().BeEquivalentTo("mockedDescription");
+            updatedResult.Id.Should().BeEquivalentTo("5883a3fa50f5fea2822f21cf");
         }
 
         [Fact]
@@ -212,11 +261,21 @@ namespace QuizSvcTest
                                         It.IsAny<MongoCollectionSettings>())).Returns(mockMongoDBCollection.Object);
             
             var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(mockMongoDatabase.Object);
-            var topicRep = new TopicRepository(dataAccess, null);
-            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
             
+            MockTopicCache( new DataEntity.Topic {
+                 Id = "5883a3fa50f5fea2822f21cf",
+                Description = "mockedDescription",
+                Notes = "mockNotes"
+            } );
+
+            var topicRep = new TopicRepository(dataAccess, _topicCacheMock.Object);
+            var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
+            var jsonPatchRequest = new JsonPatchDocument<ResponseData.TopicIgnoreUniqId>();
+            
+            jsonPatchRequest.Add( (q) => q.Description, "mockDescriptionToUpdate");
+
             // Act
-            var result = await topicController.UpdateDescription("58e5db28e40cc200151a5ba4", "mockUpdatedDescription");
+            var result = await topicController.UpdateTopic("58e5db28e40cc200151a5ba4", jsonPatchRequest);
             
             // Assert
             var statusCode = Assert.IsType<StatusCodeResult>(result);
