@@ -20,6 +20,7 @@ namespace QuizCaching
 
             if(!string.IsNullOrEmpty(cachedResult))
             {
+                await _caching.RefreshAsync(key);
                 return await Task.Run(() => JsonConvert.DeserializeObject<T>(cachedResult));
             }
             else
@@ -28,19 +29,22 @@ namespace QuizCaching
                 if(unCachedResults != null)
                 {
                     var serializeTopic = await Task.Run(() => JsonConvert.SerializeObject(unCachedResults));
-                    await _caching.SetStringAsync(key, serializeTopic);
+                    
+                    await _caching.SetStringAsync(key, serializeTopic, new DistributedCacheEntryOptions {
+                        SlidingExpiration = TimeSpan.FromHours(1)
+                    });
                 }
                 return unCachedResults;
             }
         }
 
-        public async Task SaveToCacheAsync(string key, T objectValue)
+        public async Task UpdateAsync(string key, T objectValue)
         {
-              var serializedResult = await Task.Run(() => JsonConvert.SerializeObject(objectValue));
-              await _caching.SetStringAsync(key, serializedResult);
+            var serializedResult = await Task.Run(() => JsonConvert.SerializeObject(objectValue));
+            await _caching.SetStringAsync(key, serializedResult);
         }
 
-        public async Task DeletFromCacheAsync(string key, Func<Task> asyncCallback)
+        public async Task DeletOrUpdateFromCacheAsync(string key, Func<Task> asyncCallback)
         {
             await _caching.RemoveAsync(key);
 

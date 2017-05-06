@@ -67,8 +67,10 @@ namespace QuizRepository
         {
             if(string.IsNullOrEmpty(id))
                 throw new ArgumentException();
-
-            await _quizDataAccess.Delete(id);
+            
+            await _quizCache.DeletOrUpdateFromCacheAsync(id, 
+                async () =>  await _quizDataAccess.Delete(id));
+            
         }
     }
 }

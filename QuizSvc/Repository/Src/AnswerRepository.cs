@@ -51,7 +51,7 @@ namespace QuizRepository
 
         public async Task Delete(string answerId)
         {
-            await _cache.DeletFromCacheAsync( answerId, async () => 
+            await _cache.DeletOrUpdateFromCacheAsync( answerId, async () => 
                 await _quizDataAccess.Delete(answerId)
             );
         }

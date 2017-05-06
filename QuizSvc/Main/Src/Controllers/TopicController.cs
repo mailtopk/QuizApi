@@ -60,6 +60,7 @@ namespace TopicController
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.NoContent)]
+        [SwaggerResponse(HttpStatusCode.NotModified)]
         public async Task<IActionResult> Update(string id, 
                         [FromBodyAttribute] ResponseData.TopicIgnoreUniqId topic)
         {

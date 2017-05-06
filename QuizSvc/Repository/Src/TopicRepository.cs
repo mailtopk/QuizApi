@@ -65,15 +65,25 @@ namespace QuizRepository
 
         public async Task<Topic> UpdateTopicAsync(string id, Topic topic)
         {
-            return await _quizDataAccess.Update<Topic>( 
-                id, () => new Topic { Description = topic.Description, Notes = topic.Notes});
+            try
+            {
+                var updatedResult = await _quizDataAccess.Update<Topic>(id, 
+                                () => new Topic { Description = topic.Description, Notes = topic.Notes} );
+                await _quizCache.UpdateAsync(id, updatedResult);
+
+                return updatedResult;
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
 
         public async Task DeleteAsync(string id)
         {
             try
             {
-                await _quizCache.DeletFromCacheAsync(id, 
+                await _quizCache.DeletOrUpdateFromCacheAsync(id, 
                     async () => await _quizDataAccess.Delete(id) );
             }
             catch(Exception)

@@ -184,7 +184,7 @@ namespace QuizSvcTest
                                         It.IsAny<MongoCollectionSettings>())).Returns(mockMongoDBCollection.Object);
             
             var dataAccess = new QuizDataAccess.QuizDataAccess<DataEntity.Topic>(mockMongoDatabase.Object);
-            var topicRep = new TopicRepository(dataAccess, null);
+            var topicRep = new TopicRepository(dataAccess, _topicCacheMock.Object);
             var topicController = new TopicController.TopicController( new QuizManager.QuizManager(topicRep, null, null), null);
             
            var  entity = new ResponseData.Topic{

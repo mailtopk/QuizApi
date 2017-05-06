@@ -50,16 +50,16 @@ namespace Question
         }  
 
         /// <summary>Get Question for a given topic</summary>
-        /// <param name="topicId">Topic Id</param>
-        [HttpGet("{topicId}")]
+        /// <param name="questionId">Topic Id</param>
+        [HttpGet("{questionId}")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetQuestions(string topicId)
+        public async Task<IActionResult> GetQuestions(string questionId)
         {
-            if(string.IsNullOrEmpty(topicId))
+            if(string.IsNullOrEmpty(questionId))
                 return BadRequest();
 
-            var response = await _quizManager.GetQuestionByTopicIdAsync(topicId);
+            var response = await _quizManager.GetQuestionByTopicIdAsync(questionId);
             if(response != null)
                 return new OkObjectResult(response);
 
