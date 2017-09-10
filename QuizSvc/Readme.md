@@ -95,3 +95,9 @@ This will help in debugging application on local machine
 ```
     $ dotnet test
 ```
+### Docker clean
+```
+    $ docker rm -f $(docker ps -a -q)
+    $ docker volume rm $(docker volume ls)
+    $ docker rmi -f $(docker images -q)
+```

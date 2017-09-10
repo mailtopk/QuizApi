@@ -1,10 +1,15 @@
 version: '2'
 services: 
-    webservice:
+    webservice_node1:
         image: quizwebapi
         build: .
         ports: 
             - "8080:5000"
+    webservice_node2:
+        image: quizwebapi
+        build: .
+        ports: 
+            - "8081:5000"
     backenddb:
         image: mongo
         ports: 
@@ -13,3 +18,9 @@ services:
         image: redis
         ports: 
             - "6379:6379"
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        hostname: "rmq"
+        ports:
+            - '15672:15672'
+            - '5672:5672'
