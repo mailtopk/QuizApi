@@ -1,6 +1,6 @@
-FROM microsoft/dotnet:1.1.0-sdk-projectjson
+FROM microsoft/dotnet
 
-MAINTAINER Prashant Pooboni
+LABEL MAINTAINER Prashant Pooboni
 
 
 COPY . /app
@@ -15,6 +15,7 @@ RUN ["dotnet", "restore"]
 # Build project 
 WORKDIR "/app/Main"
 RUN ["dotnet", "build"]
+RUN ["dotnet", "clean"]
 
 # Run test 
 WORKDIR /app/Test

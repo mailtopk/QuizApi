@@ -1,15 +1,11 @@
 version: '2'
 services: 
-    webservice_node1:
+    webservice:
         image: quizwebapi
         build: .
         ports: 
             - "8080:5000"
-    webservice_node2:
-        image: quizwebapi
-        build: .
-        ports: 
-            - "8081:5000"
+    
     backenddb:
         image: mongo
         ports: 

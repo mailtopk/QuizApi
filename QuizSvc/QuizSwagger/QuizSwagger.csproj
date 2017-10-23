@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>QuizSwagger</AssemblyName>
+    <PackageId>QuizSwagger</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.SwaggerGen" Version="6.0.0-beta901" />
+    <PackageReference Include="Swashbuckle.SwaggerUi" Version="6.0.0-beta901" />
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-#dll's files
+ls #dll's files
 *.dll
 
 #debug files
@@ -15,3 +15,6 @@
 
 #Ignore local scripts
 Tools/
+
+#Ignore backup's
+backup/

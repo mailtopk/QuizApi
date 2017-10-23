@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Test</AssemblyName>
+    <PackageId>Test</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <!-- <PackageTargetFallback>$(PackageTargetFallback);dotnet5.4;portable-net451+win8</PackageTargetFallback>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Repository/Repository.csproj" />
+    <ProjectReference Include="../DatabaseAccess/DatabaseAccess.csproj" />
+    <ProjectReference Include="../Cache/Cache.csproj" />
+    <ProjectReference Include="../Main/Main.csproj" /> 
+    <ProjectReference Include="../Helper/Helper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170106-08" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta5-build1225" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="xunit" Version="2.2.0-beta5-build3474" />
+    <PackageReference Include="Moq" Version="4.6.0-*" />
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis.Core" Version="1.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="1.0.0" />
+    <PackageReference Include="FluentAssertions" Version="4.19.2" />
+  </ItemGroup>
+
+</Project>
+<!--
+Honda Genuine 08200-9008 Automatic Transmission Fluid ATF DW-1, 4 Quarts - 8 Quarts
+Genuine Honda Parts OL999-9011 Blue Type 2 Coolant - 1 Gallon Bottle - eight
+Genuine Honda Fluid 08206-9002 Power Steering Fluid - 12 oz. - NO
+Genuine Honda Fluid 08798-9008 DOT 3 Brake Fluid - 12 oz. 3 bootls
+
+
+Expected delivery: Wednesday, November 15, 2017 - Friday, December 1, 2017 by 8 PM
+ 
+Mobil 1 (120768) High Mileage 5W-20 Motor Oil - 5 Quart
+Sold by: Amazon.com LLC
+$25.47
+
+-->
