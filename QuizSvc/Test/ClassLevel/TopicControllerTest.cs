@@ -99,7 +99,7 @@ namespace QuizSvcTest
 
             var result =  await _topicControllerMock.GetAll();
             Assert.IsType<OkObjectResult>(result);
-            var list = Assert.IsAssignableFrom<List<ResponseData.Topic>>(((ObjectResult)result).Value);
+            var list = Assert.IsAssignableFrom<IReadOnlyCollection<ResponseData.Topic>>(((ObjectResult)result).Value);
             Assert.Equal(mockResults.Count, list.Count);
         }
 
