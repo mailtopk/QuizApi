@@ -1,19 +1,17 @@
-FROM microsoft/dotnet
+FROM microsoft/dotnet:sdk AS build-env
 
 LABEL MAINTAINER Prashant Pooboni
 
 
 COPY . /app
-WORKDIR /app
 
 # Add certificate
 #ADD you_certificate.crt:/container/cert/path
 
-# Restore from global.json
-RUN ["dotnet", "restore"]
 
 # Build project 
 WORKDIR "/app/Main"
+RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"]
 RUN ["dotnet", "clean"]
 

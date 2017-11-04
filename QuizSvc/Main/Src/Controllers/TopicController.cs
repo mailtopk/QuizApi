@@ -22,13 +22,15 @@ namespace TopicController
 
         /// <summary>Get all Topics</summary>
         [HttpGet]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
+        [SwaggerResponse(HttpStatusCode.OK)]
         public async Task<IActionResult> GetAll()
         {
             var results= await _quizManager.GetAllTopicsAync();
             if(results != null)
                 return new OkObjectResult(results);
 
-            return new OkResult();
+            return NotFound();
         }
 
         /// <summary>Get Topic by topic unique id</summary>
@@ -90,7 +92,6 @@ namespace TopicController
         /// <param name="topic"> JSON Patch - rfc6902 </param>
         /// <remarks>
         /// Example - Replace Topic description and add notes for an existing Question. 
-        /// Note - Topic id should be an exisint topic id.
         ///
         /// PATCH /topics
         /// [

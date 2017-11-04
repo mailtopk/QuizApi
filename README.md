@@ -30,31 +30,30 @@ Example : -
   |    |    |_/Controllers
   |    |    |_/QuizManager
   |    |    |_/ResponseData
-  |    |_/project.json
+  |    |_/Main.csproj
   |
   |__/Repository
   |     |_/src
   |     |    |__/TopicRepository
   |     |    |__/QuestionsRepository
   |     |    |_/AnswerRepository
-  |     |_/project.json
+  |     |_/Repository.csproj
   |
   |__/DatabaseAccess
   |     |_/Src
-  |     |_/project.json
+  |     |_/DatabaseAccess.csproj
   |
   |__/Helper
-  |     |_/project.json
+  |     |_/Helper.csproj
   |
   |__/Cache
   |     |_/Src
-  |     |_/project.json
+  |     |_/Cache.csproj
   |
   |__/Test
   |     |_/ClassLevel
-  |     |__/project.json
+  |     |__/ClassLevel
   |
-  |__/global.json
   |__/Dockerfile
   |__/docker-compose.yml
   |__/Readme.md
