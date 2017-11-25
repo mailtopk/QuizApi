@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:sdk AS build-env
+FROM microsoft/aspnetcore-build:2.0
 
 LABEL MAINTAINER Prashant Pooboni
 

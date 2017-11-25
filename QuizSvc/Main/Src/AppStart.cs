@@ -14,6 +14,9 @@ using QuizSwagger;
 using QuizManager;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace QuizSvc
 {
@@ -122,8 +125,11 @@ namespace QuizSvc
             }
             return string.Empty;
         }
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddNLog();
+            app.AddNLogWeb();
+            env.ConfigureNLog("../../../Config/nlog.config");
             app.UseSwagger();
             app.UseSwaggerUi();
             app.UseMvcWithDefaultRoute();

@@ -70,8 +70,8 @@ https://github.com/mailtopk/QuizApi.git
 * Required Software 
     - [Docker](https://www.docker.com/)
     
-### Build docker images (web service, mongodb and redis)
-Build docker images, web service, mongodb and redis caching.
+### Build docker images (web service, mongodb and redis, graylog)
+Build docker images, web service, mongodb redis caching and docker.
 Make sure your current directory is QuizSvc
 ```
     $ docker-compose build
@@ -81,6 +81,7 @@ Make sure your current directory is QuizSvc
 ```
     $ docker-compose up -d
 ```
+
 At this point docker container's should be up and running.
 
 ### Verify containers are up and running
@@ -94,6 +95,13 @@ Get list of all the endpoint, below api explorer
     http://localhost:8080/swagger/ui/index.html
 ```
 
+### Log
+Access log data - Graylog.
+Default username and password of graylog
+```
+    http://localhost:9000/
+```
+
 At this point quiz web service is ready to use.
 
 ### Cleanup docker stop and remove containers, networks
@@ -104,7 +112,9 @@ At this point quiz web service is ready to use.
 ### To do
 - [x] Support to update Topic
 - [x] Support to update Question
+- [x] Support for logging (Graylog)
+    - [ ] Script to configure Graylog settings
 - [ ] Support to update Answer
 - [ ] Build UI
 - [x] Add Swagger documentation
-- [ ] Multiple answer for one questions 
+- [ ] Multiple answer for one questions

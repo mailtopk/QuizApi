@@ -2,6 +2,7 @@
 This is a RESTful web service to build Quiz/Flashcard .
 
 ## Debugging under Docker environment 
+* Logging is supported by Graylog 
 * Get container info if running
 ``` 
     $ docker inspect <containerId>

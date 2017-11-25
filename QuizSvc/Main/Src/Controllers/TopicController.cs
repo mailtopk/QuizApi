@@ -13,7 +13,7 @@ namespace TopicController
     public class TopicController : Controller
     {
         private readonly IQuizManager _quizManager;
-        private readonly ILogger _loggerTopic;
+        private readonly ILogger<TopicController> _loggerTopic;
         public TopicController(IQuizManager quizManager, ILogger<TopicController> logger)
         {
             _quizManager = quizManager;
@@ -50,8 +50,8 @@ namespace TopicController
             }
             catch (System.Exception ex)
             {
-                _loggerTopic.LogCritical($"GetById{ex}");
-                return BadRequest();
+                 _loggerTopic.LogError($"Error {ex}");
+                 return BadRequest();
             }
         }
 
