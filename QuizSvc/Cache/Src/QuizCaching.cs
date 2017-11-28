@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Redis;
 using Newtonsoft.Json;
 
 namespace QuizCaching
@@ -16,12 +18,12 @@ namespace QuizCaching
 
         public async Task<T> GetValueFromKeyAsync(string key, Func<string, Task<T>> asyncCallback)
         {
-            var cachedResult = await _caching.GetStringAsync(key);
-
-            if(!string.IsNullOrEmpty(cachedResult))
+            var cachedResult = await _caching.GetAsync(key);
+            if(cachedResult != null)
             {
-                await _caching.RefreshAsync(key);
-                return await Task.Run(() => JsonConvert.DeserializeObject<T>(cachedResult));
+                var encodedResult = Encoding.UTF8.GetString(cachedResult);
+                await  _caching.RefreshAsync(key);
+                return await Task.Run(() => JsonConvert.DeserializeObject<T>(encodedResult));
             }
             else
             {
@@ -41,7 +43,12 @@ namespace QuizCaching
         public async Task UpdateAsync(string key, T objectValue)
         {
             var serializedResult = await Task.Run(() => JsonConvert.SerializeObject(objectValue));
-            await _caching.SetStringAsync(key, serializedResult);
+            if(serializedResult == null)
+                throw new ArgumentNullException("Can not update null value");
+
+            var encodedResult = Encoding.UTF8.GetBytes(serializedResult);
+            await _caching.SetAsync(key, encodedResult, new DistributedCacheEntryOptions {
+                        SlidingExpiration = TimeSpan.FromHours(1)});
         }
 
         public async Task DeletOrUpdateFromCacheAsync(string key, Func<Task> asyncCallback)

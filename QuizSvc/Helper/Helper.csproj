@@ -5,7 +5,6 @@
     <DebugType>portable</DebugType>
     <AssemblyName>Helper</AssemblyName>
     <PackageId>Helper</PackageId>
-    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
   </PropertyGroup>
 
 </Project>

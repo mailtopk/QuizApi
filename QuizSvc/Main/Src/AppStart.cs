@@ -44,10 +44,9 @@ namespace QuizSvc
 
 
             // Redis
-            // Redis can not use host name - this is workaround
-            // https://github.com/StackExchange/StackExchange.Redis/issues/410
             services.AddDistributedRedisCache(
-                options => options.Configuration = GetRedisContainerIPAddress());
+                options =>  {options.Configuration =  "cachingservice"; 
+                options.InstanceName = "QuizAPI"; });
             
             // Data Access Layer
             services.AddTransient<IQuizDataAccess<Topic>>(t => new QuizDataAccess<Topic>());
@@ -110,21 +109,6 @@ namespace QuizSvc
                 qm => new QuizManager.QuizManager( topicRepoInstance, questionRepoInstance,  answerRepoInstance));
         }
 
-        private string GetRedisContainerIPAddress()
-        {
-            try
-            {
-                // TODO - fix the blocking call
-                var iphostEntry = Dns.GetHostEntryAsync("cachingservice").GetAwaiter().GetResult().AddressList;
-                Console.WriteLine($"[DEBUG] : IP Address of redis : {iphostEntry.FirstOrDefault()}");
-                return iphostEntry.FirstOrDefault().ToString();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[ERROR] : Connecting to redis {ex.Message}");
-            }
-            return string.Empty;
-        }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
