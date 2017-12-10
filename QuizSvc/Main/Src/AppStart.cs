@@ -111,9 +111,11 @@ namespace QuizSvc
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            var applicationPath = PlatformServices.Default.Application.ApplicationBasePath;
+            var configFile = Path.Combine(applicationPath, "Config/nlog.config");
             loggerFactory.AddNLog();
             app.AddNLogWeb();
-            env.ConfigureNLog("../../../Config/nlog.config");
+            env.ConfigureNLog(configFile);
             app.UseSwagger();
             app.UseSwaggerUi();
             app.UseMvcWithDefaultRoute();

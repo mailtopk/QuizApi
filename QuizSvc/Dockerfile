@@ -1,30 +1,28 @@
-FROM microsoft/aspnetcore-build:2.0
-
+FROM microsoft/aspnetcore-build:2.0 AS build-env
 LABEL MAINTAINER Prashant Pooboni
 
+WORKDIR /app
+COPY Main/*.csproj ./Main
+COPY Cache/*.csproj ./Cache
+COPY DatabaseAccess/*.csproj ./DatabaseAccess
+COPY Helper/*.csproj ./Helper
+COPY QuizSwagger/*csproj ./QuizSwagger
+COPY Repository/*.csproj ./Repository
 
-COPY . /app
+COPY . ./
 
-# Add certificate
-#ADD you_certificate.crt:/container/cert/path
+WORKDIR /app/Main
+RUN dotnet publish -c Release -o out
+
+WORKDIR /app/Cache
+RUN dotnet publish -c Release -o out
 
 
-# Build project 
-WORKDIR "/app/Main"
-RUN ["dotnet", "restore"]
-RUN ["dotnet", "build"]
-RUN ["dotnet", "clean"]
-
-# Run test 
-WORKDIR /app/Test
-RUN ["dotnet", "test"]
-
-EXPOSE 5000/tcp
-ENV ASPNETCORE_URLS http://*:5000
-
-# Entry point
-WORKDIR "/app/Main"
-ENTRYPOINT ["dotnet", "run"]
+FROM microsoft/aspnetcore:2.0
+WORKDIR /app
+COPY --from=build-env /app/Main/out .
+COPY --from=build-env /app/Cache/out .
+ENTRYPOINT ["dotnet", "Main.dll"]
 
 
 

@@ -4,7 +4,7 @@ services:
         image: quizwebapi
         build: .
         ports: 
-            - 8080:5000
+            - 8080:80
     backenddb:
         image: mongo
         ports:

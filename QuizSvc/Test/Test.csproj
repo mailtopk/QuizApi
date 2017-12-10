@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DebugType>portable</DebugType>
@@ -9,15 +8,13 @@
     <!-- <PackageTargetFallback>$(PackageTargetFallback);dotnet5.4;portable-net451+win8</PackageTargetFallback>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion> -->
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="../Repository/Repository.csproj" />
     <ProjectReference Include="../DatabaseAccess/DatabaseAccess.csproj" />
     <ProjectReference Include="../Cache/Cache.csproj" />
-    <ProjectReference Include="../Main/Main.csproj" /> 
+    <ProjectReference Include="../Main/Main.csproj" />
     <ProjectReference Include="../Helper/Helper.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170106-08" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta5-build1225" />
@@ -25,12 +22,11 @@
     <PackageReference Include="xunit" Version="2.2.0-beta5-build3474" />
     <PackageReference Include="Moq" Version="4.6.0-*" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis.Core" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="2.0.0" />
     <PackageReference Include="FluentAssertions" Version="4.19.2" />
   </ItemGroup>
-
 </Project>
 <!--
 Honda Genuine 08200-9008 Automatic Transmission Fluid ATF DW-1, 4 Quarts - 8 Quarts
