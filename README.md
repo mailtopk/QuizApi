@@ -63,13 +63,26 @@ Example : -
 
 # Build and Run project in Docker Environment
 
+### Required Software
+    - Git
+    - [Docker](https://www.docker.com/)
+
 ### Clone the project
+In general you can clone the repo with below command.
 ```
 https://github.com/mailtopk/QuizApi.git
 ```
-* Required Software 
-    - [Docker](https://www.docker.com/)
-    
+*Trouble shot : -* Some of the environments - you may see error *Cloning into 'QuizApi'...
+fatal: unable to access https://github.com/mailtopk/QuizApi.git/ Could not resolve host: github.com*, try setting git config url
+```
+    $ git config --global url.git://github.com/.insteadOf https://github.com/
+```
+
+After successful clone to git repo, you should see a folder *QuizSvc*. cd to *QuizSvc/QuizSvc* to build docker images
+```
+    $ cd QuizSvc/QuizSwagger/
+```
+
 ### Build docker images (web service, mongodb and redis, graylog)
 Build docker images, web service, mongodb redis caching and docker.
 Make sure your current directory is QuizSvc
