@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
 using QuizManager;
 using ResponseData;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace Question
@@ -13,10 +14,13 @@ namespace Question
      public  class QuestionController : Controller
      {
          private IQuizManager _quizManager;
+         private ILogger<QuestionController> _log;
+
          public QuestionController(
-            IQuizManager quizManager)
+            IQuizManager quizManager, ILogger<QuestionController> log)
          {
              _quizManager = quizManager;
+             _log = log;
          }
 
          /// <summary>Get all Questions</summary>
@@ -31,7 +35,7 @@ namespace Question
              }
              catch(Exception ex)
              {
-                 Console.WriteLine($"[Error ]{ex}");
+                 _log.LogError($"Class = {typeof(QuestionController).Name} Exception = {ex}");
                  return BadRequest();
              }
          } 
@@ -42,11 +46,22 @@ namespace Question
         [SwaggerResponse(HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(string topicId)
         {
-            var response = await _quizManager.GetQuestionByIdAsync(topicId);
-            if(response != null)
-                return new OkObjectResult(response);
+            if(string.IsNullOrEmpty(topicId))
+                return BadRequest();
+            try
+            {
+                var response = await _quizManager.GetQuestionByIdAsync(topicId);
+                if(response != null)
+                    return new OkObjectResult(response);
 
-            return NotFound();
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Class = {typeof(QuestionController).Name} Exception={ex}");
+                throw;
+            }
+            
         }  
 
         /// <summary>Get Question for a given topic</summary>

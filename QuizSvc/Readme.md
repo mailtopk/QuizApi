@@ -1,6 +1,11 @@
 # Project Details
 This is a RESTful web service to build Quiz/Flashcard .
 
+## Graylog Setup
+Login to Graylog dashboard (http://localhost:900), using default username and password and setup *System/Input*.
+Navigate to System/input page (graylog menu -> System -> Inputs), Select *GELF UDP* in drop down box, and click on *Launch new input* button.
+Enter title, select node and save.
+
 ## Debugging under Docker environment 
 * Logging is supported by Graylog 
 * Get container info if running
@@ -42,7 +47,7 @@ Run redis client
 ```
 List all the key
 ```
-    > key *
+    > keys *
 ```
 Show all the values in a give key 
 ```
