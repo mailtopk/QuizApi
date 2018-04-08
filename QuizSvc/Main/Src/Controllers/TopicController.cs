@@ -38,6 +38,7 @@ namespace TopicController
         [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.OK)]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetById(string id)
         {
             if(string.IsNullOrEmpty (id))
@@ -46,12 +47,29 @@ namespace TopicController
             try
             {
                 var results =  await _quizManager.GetTopicByIdAsync(id);
+                if( results == null)
+                    return NotFound();
+
                 return new ObjectResult(results);
             }
             catch (System.Exception ex)
             {
                  _loggerTopic.LogError($"Error {ex}");
-                 return BadRequest();
+                 return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpGet("{id}/question")]
+        public async Task<IActionResult> GetQuestionsByTopicId(string id)
+        {
+            try
+            {
+                throw new Exception("not implemented");
+            }
+            catch (System.Exception)
+            {
+                
+                throw;
             }
         }
 
