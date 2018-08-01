@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cachingservice
+  name: cachingservice
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cachingservice
+    spec:
+      containers:
+      - image: redis
+        name: cachingredis
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+        - containerPort: 15672
+        - containerPort: 5672
+        resources: {}
+      restartPolicy: Always
+status: {}
