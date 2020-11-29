@@ -1,0 +1,9 @@
+name: opencv4od
+channels:
+    - conda-forge
+dependencies:
+    - python==3.7
+    - jupyterlab
+    - pip
+    - pip:
+        - opencv-contrib-python==4.1.0.25
